@@ -26,11 +26,10 @@ class _Checkin:
     #-------------------------------------------------------------------------
     def validate(self):
         # Do some simple cleaning of the data before storing it
-        clean_week_num = -1
         if self.week_number < 0 or self.week_number > MAX_WEEK_NUMBER:
             raise ValueError(f'Invalid week number: {self.week_number}')
         if not validate_callsign(self.callsign):
-            raise ValueError(f'Invalid callsign: {self.allsign}')
+            raise ValueError(f'Invalid callsign: {self.callsign}')
         if not mode_validator(self.mode):
             # Before we raise an error, let's see if there is a possible
             # match

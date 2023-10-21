@@ -67,9 +67,11 @@ class _CallsignProcessor:
 
         wip_callsign = callsign.strip().upper()
         canonical_callsign = self.remove_suffix(wip_callsign)
-        if canonical_callsign in self.callsign_cache:
-            oc = self.callsign_cache.get(canonical_callsign)
-            self.callsign_cache[canonical_callsign] = oc + 1
+
+        call_seen_before_num = self.callsign_cache.get(canonical_callsign)
+        if call_seen_before_num is not None:
+            # Seen the callsign before
+            self.callsign_cache[canonical_callsign] = call_seen_before_num + 1
             return True
         
         # Not seen this callsign before. Better validate it.
