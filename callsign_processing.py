@@ -52,7 +52,7 @@ class _CallsignProcessor:
         return callsign_matchers
 # -----------------------------------------------------------------------------
 
-    def remove_suffixes(self, callsign: str) -> str:
+    def remove_suffix(self, callsign: str) -> str:
         """Trim any callsigns that may have a suffix like /M or -10"""
         clean_callsign = callsign.strip()
         clean_callsign = clean_callsign.upper()
@@ -65,8 +65,8 @@ class _CallsignProcessor:
     def validate(self, callsign: str) -> bool:
         """Checks to see if a string is a probable amateur radio callsign."""
 
-        canonical_callsign = callsign.strip().upper()
-
+        wip_callsign = callsign.strip().upper()
+        canonical_callsign = self.remove_suffix(wip_callsign)
         if canonical_callsign in self.callsign_cache:
             oc = self.callsign_cache.get(canonical_callsign)
             self.callsign_cache[canonical_callsign] = oc + 1
@@ -103,7 +103,4 @@ def validate_callsign(callsign):
 def print_callsign_cache():
     cs_processor.dump_callsign_cache()
 
-def clean_callsign(callsign):
-    return cs_processor.remove_suffixes(callsign)
-
-__all__ = ['validate_callsign', 'clean_callsign', 'print_callsign_cache']
+__all__ = ['validate_callsign', 'print_callsign_cache']

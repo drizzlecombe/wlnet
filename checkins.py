@@ -1,6 +1,4 @@
 from callsign_processing import validate_callsign
-from callsign_processing import print_callsign_cache
-from callsign_processing import clean_callsign
 from transport_modes import mode_validator, mode_best_guess
 
 MAX_WEEK_NUMBER = 75 # TODO - load this from a config file
@@ -32,11 +30,7 @@ class _Checkin:
         if self.week_number < 0 or self.week_number > MAX_WEEK_NUMBER:
             raise ValueError(f'Invalid week number: {self.week_number}')
         if not validate_callsign(self.callsign):
-            # See if the callsign has some sort of suffix like /M or -10.
-            # If so, remove that and try again
-            self.callsign = clean_callsign(self.callsign)
-            if not validate_callsign(self.callsign):
-                raise ValueError(f'Invalid callsign: {self.allsign}')
+            raise ValueError(f'Invalid callsign: {self.allsign}')
         if not mode_validator(self.mode):
             # Before we raise an error, let's see if there is a possible
             # match
@@ -57,6 +51,8 @@ class _Checkin:
     def __str__(self) -> str:
         return self.__repr__()
     
+#------------------------------------------------------------------------------
+# Module interface below
 #------------------------------------------------------------------------------
 def add_checkin(week_number: int,
                 callsign: str,
