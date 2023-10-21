@@ -1,7 +1,7 @@
 from callsign_processing import validate_callsign
 from callsign_processing import print_callsign_cache
 from callsign_processing import clean_callsign
-from WinlinkMode import mode_validator, mode_best_guess
+from transport_modes import mode_validator, mode_best_guess
 
 MAX_WEEK_NUMBER = 75 # TODO - load this from a config file
 
