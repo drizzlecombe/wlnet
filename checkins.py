@@ -11,12 +11,16 @@ class _Checkin:
                  gateway: str, gw_frequency: float, location: str,
                  state: str ) -> None:
 
+        # Make sure the frequency can be converted to a floating point number,
+        # otherwise this is a bad entry.
+        valid_frequency = float(gw_frequency)
+
         self.validated = False
         self.week_number = week_number
-        self.callsign = callsign.upper()
-        self.mode = transport_mode.upper()
+        self.callsign = callsign
+        self.mode = transport_mode
         self.gateway = gateway.upper()
-        self.frequency = gw_frequency
+        self.frequency = valid_frequency
         self.location = location.capitalize()
         if len(state) == 2:
             self.state = state.upper()
@@ -30,13 +34,11 @@ class _Checkin:
             raise ValueError(f'Invalid week number: {self.week_number}')
         if not validate_callsign(self.callsign):
             raise ValueError(f'Invalid callsign: {self.callsign}')
-        if not mode_validator(self.mode):
-            # Before we raise an error, let's see if there is a possible
-            # match
-            try:
-                self.mode = mode_best_guess(self.mode, self.frequency)
-            except:
-                raise ValueError(f'Mode is incorrect: {self.mode}')
+        checked_mode = mode_validator(self.mode, self.frequency)
+        if checked_mode is not None:
+            self.mode = checked_mode
+        else:
+            raise ValueError(f'Mode is invalid: {self.mode}')
         self.validated = True
     #--------------------------------------------------------------------------
     def isvalidated(self):

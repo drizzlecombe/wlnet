@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 # -----------------------------------------------------------------------------
 # A module for attempting to determine what transport mode has been supplied
 # -----------------------------------------------------------------------------
@@ -9,31 +10,42 @@
 _expected_modes = {'ARDOP', 'MESH', 'PACKET', 'PACTOR', 'SMTP',
                 'TELNET', 'VARA', 'VARA FM'}
 
-def mode_validator(mode: str) -> bool:
-    return mode.upper() in _expected_modes
+def mode_validator(raw_mode: str, frequency: float) -> str:
+    if not isinstance(raw_mode, str):
+        return None
+    intermediate_mode = (raw_mode.strip()).upper()
+    canonical_mode = mode_best_guess(intermediate_mode, frequency)
+    return canonical_mode
 
-def mode_best_guess(mode: str, frequency: str) -> str:
-    # Deal with the VARA modes first since there is scope for a lot of
-    # variation. This module only recognises VARA and VARA FM. Anything else
-    # has to fall into one of those two categories.
-    #
-    # The frequency used provides a hint what version of VARA we choose.
-    # Typically VARA is used only on HF whereas VARA FM is only used on VHF and
-    # UHF.
+# This pattern assumes that all whitespace has been trimmed and the target
+# string has been canonicalised to upper case. This is a tool of last resort
+# because there are so many mistakes that can be made typing modes.
+_split_pattern = re.compile(r'^([A-Z]+)([^A-Z]+)(.*)$')
+
+def mode_best_guess(mode: str, frequency: float) -> str:
+    """Clean up a mode string as best we can
     
-    uc_mode = mode.upper()
-
-    if uc_mode == 'VARA FM' or \
-        uc_mode == 'VARAFM' or \
-            uc_mode == 'VARA-FM' or \
-                uc_mode == 'VARA_FM':
-        return 'VARA FM'
-    elif uc_mode[:4] == 'VARA':
-        return 'VARA'
-    elif uc_mode[:4] == 'PACT':
+    This function expects the mode already to be in upper case with no
+    whitespace at either end of the string.
+    """
+    first_mode_chars = mode[:4]
+    if first_mode_chars == 'VARA':
+        if frequency < 50.0:
+            return 'VARA'
+        else:
+            return 'VARA FM'
+    elif first_mode_chars == 'PACK':
+        return 'PACKET'
+    elif first_mode_chars == 'TELN':
+        return 'TELNET'
+    elif first_mode_chars == 'PACT':
         return 'PACTOR'
+    elif first_mode_chars == 'MESH':
+        return 'MESH'
+    elif first_mode_chars == 'SMTP':
+        return 'SMTP'
     else:
-        raise ValueError(f'Invalid mode: {mode}')
-
+        return None
+    return None
     
-__all__ = [mode_validator, mode_best_guess]
+__all__ = [mode_validator]
