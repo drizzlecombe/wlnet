@@ -62,7 +62,7 @@ class _CallsignProcessor:
         return callsign
 
 # -----------------------------------------------------------------------------
-    def validate(self, callsign: str) -> bool:
+    def validate(self, callsign: str) -> str:
         """Checks to see if a string is a probable amateur radio callsign."""
 
         wip_callsign = callsign.strip().upper()
@@ -72,14 +72,14 @@ class _CallsignProcessor:
         if call_seen_before_num is not None:
             # Seen the callsign before
             self.callsign_cache[canonical_callsign] = call_seen_before_num + 1
-            return True
+            return canonical_callsign
         
         # Not seen this callsign before. Better validate it.
         for pattern in self.patterns:
             if pattern.match(canonical_callsign):
                 self.callsign_cache.setdefault(canonical_callsign, 1)
-                return True
-        return False
+                return canonical_callsign
+        return None
 # -----------------------------------------------------------------------------
     def dump_callsign_cache(self):
         s = sorted(self.callsign_cache.items(), key = lambda x: x[1])

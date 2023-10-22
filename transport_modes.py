@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import re
 # -----------------------------------------------------------------------------
 # A module for attempting to determine what transport mode has been supplied
 # -----------------------------------------------------------------------------
@@ -16,11 +15,6 @@ def mode_validator(raw_mode: str, frequency: float) -> str:
     intermediate_mode = (raw_mode.strip()).upper()
     canonical_mode = mode_best_guess(intermediate_mode, frequency)
     return canonical_mode
-
-# This pattern assumes that all whitespace has been trimmed and the target
-# string has been canonicalised to upper case. This is a tool of last resort
-# because there are so many mistakes that can be made typing modes.
-_split_pattern = re.compile(r'^([A-Z]+)([^A-Z]+)(.*)$')
 
 def mode_best_guess(mode: str, frequency: float) -> str:
     """Clean up a mode string as best we can
