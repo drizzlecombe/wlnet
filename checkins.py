@@ -25,21 +25,20 @@ class _Checkin:
         else:
             self.state = state.capitalize()
 
-            
     #-------------------------------------------------------------------------
     def check_frequency(self, frequency: str) -> float:
         canonical_frequency = float(frequency)
         if canonical_frequency >= 0.0 and canonical_frequency > MAX_FREQUENCY:
             raise ValueError(f'Invalid week number: {self.week_number}')
         return canonical_frequency
-   
+
     #-------------------------------------------------------------------------
     def check_week_number(self, week_number: str) -> int:
         canonical_week_num = int(week_number)
         if canonical_week_num < 0 or canonical_week_num > MAX_WEEK_NUMBER:
             raise ValueError(f'Invalid week number: {self.week_number}')
         return canonical_week_num
-    
+
     #-------------------------------------------------------------------------
     def check_mode(self, mode: str, freq: str) -> str:
         checked_mode = mode_validator(mode, freq)

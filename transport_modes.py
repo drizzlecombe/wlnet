@@ -38,8 +38,11 @@ def mode_best_guess(mode: str, frequency: float) -> str:
         return 'MESH'
     elif first_mode_chars == 'SMTP':
         return 'SMTP'
+    # We have not (yet) seen these modes:
+    elif first_mode_chars == 'ARDO':
+        return 'ARDOP'
     else:
-        return None
+        raise ValueError(f'Unknown transport mode: {mode}')
     return None
     
 __all__ = [mode_validator]
