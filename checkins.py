@@ -56,10 +56,6 @@ class _Checkin:
             raise ValueError(f'Invalid callsign: {callsign}')
         return canonical_callsign
 
-    #--------------------------------------------------------------------------
-    def isvalidated(self):
-        return self.validated
-
     #-------------------------------------------------------------------------
     def __repr__(self) -> str:
         return f'{self.week_number}, {self.callsign}, {self.mode}, '\
