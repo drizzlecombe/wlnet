@@ -57,8 +57,8 @@ class _Checkin:
 
     #-------------------------------------------------------------------------
     def __repr__(self) -> str:
-        return f'{self.week_number}, {self.callsign}, {self.mode}, '\
-            f'{self.gateway}, {self.frequency:.4f}, {self.location}, '\
+        return f'{self.week_number},{self.callsign},{self.mode},'\
+            f'{self.gateway},{self.frequency:.4f},{self.location},'\
             f'{self.state}'
     #-------------------------------------------------------------------------
     def __str__(self) -> str:

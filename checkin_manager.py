@@ -62,10 +62,11 @@ def scan_file(csv_file_name, num_header_lines):
                         float(freq), location, state)
             
             total_lines_processed += 1
-            print(f'{total_lines_processed}, {get_last_checkin_repr()}')
-        print(f'\n{csv_file_name}: total checkins processed '\
-              f'- {total_lines_processed}')
-        print()
+            # print(f'{total_lines_processed}, {get_last_checkin_repr()}')
+            print(f'{get_last_checkin_repr()}')
+        # print(f'\n{csv_file_name}: total checkins processed '\
+        #     f'- {total_lines_processed}')
+        # print()
         
 
 # ------------------------------------------------------------------------------
