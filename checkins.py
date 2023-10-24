@@ -2,6 +2,7 @@ from string import capwords
 
 from callsign_processing import validate_callsign
 from transport_modes import mode_validator, mode_best_guess
+from gateway import gateway_validator
 
 MAX_WEEK_NUMBER = 75 # TODO - load this from a config file
 MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
@@ -13,12 +14,15 @@ class _Checkin:
     def __init__(self, week_number: int, callsign: str, transport_mode: str,
                  gateway: str, gw_frequency: float, location: str,
                  state: str ) -> None:
-
+        # print(f'{week_number}, {callsign}, {transport_mode}, {gateway}')
         self.week_number = self.check_week_number(week_number)
         self.callsign = self.check_callsign(callsign)
         self.mode = self.check_mode(transport_mode, gw_frequency)
-        self.gateway = gateway.upper()
-        self.frequency = self.check_frequency(gw_frequency)
+
+        (canonical_gateway, canonical_frequency) = \
+            gateway_validator(gateway, gw_frequency, self.mode)
+        self.gateway = canonical_gateway
+        self.frequency = self.check_frequency(canonical_frequency)
         self.location = capwords(location)
         if len(state) == 2:
             self.state = state.upper()
@@ -29,7 +33,7 @@ class _Checkin:
     def check_frequency(self, frequency: str) -> float:
         canonical_frequency = float(frequency)
         if canonical_frequency >= 0.0 and canonical_frequency > MAX_FREQUENCY:
-            raise ValueError(f'Invalid week number: {self.week_number}')
+            raise ValueError(f'Invalid frequency: {frequency}')
         return canonical_frequency
 
     #-------------------------------------------------------------------------

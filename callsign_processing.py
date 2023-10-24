@@ -45,9 +45,12 @@ class _CallsignProcessor:
         # letter. Single letter suffix.
         callsign_matchers.append(re.compile(r"^A[A-L][0-9][A-Z]$"))
 
-        # Lastly - special event stations. 1x1. Prefix K, N, W. Suffix: A-W or
-        # Y-Z. X is not permitted.
+        # Lastly, for the US at least - special event stations. 1x1. Prefix K,
+        # N, W. Suffix: A-W or Y-Z. X is not permitted.
         callsign_matchers.append(re.compile(r"^[KNW][0-9][A-WYZ]$"))
+
+        # Canadian catchall
+        callsign_matchers.append(re.compile(r'^V[AEOY][0-9][A-Z]{2,3}$'))
 
         return callsign_matchers
 # -----------------------------------------------------------------------------
