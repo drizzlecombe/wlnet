@@ -10,6 +10,8 @@
 import argparse
 import csv
 from checkins import add_checkin, get_last_checkin_repr
+from storage import start_database, close_database,\
+                    create_checkin_table, StorageException
 
 CHECKIN_NUM_COLUMNS = 7 # TODO - set this value via a configuration file
 CHECKIN_FIELD_NAMES = ('week_number', 
@@ -67,9 +69,12 @@ def main():
     # Set up command line parsing
     (num_header_lines, csv_file_list) = process_command_line()
 
+    start_database('basic_test.db')
+    create_checkin_table()
+
     for csv_file_name in csv_file_list:
         scan_file(csv_file_name, num_header_lines)
-
+    close_database()
 # ------------------------------------------------------------------------------
 
 if __name__ == '__main__':

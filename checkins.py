@@ -1,8 +1,9 @@
 from string import capwords
 
 from callsign_processing import validate_callsign
-from transport_modes import mode_validator, mode_best_guess
+from transport_modes import mode_validator
 from gateway import gateway_validator
+from storage import save_checkin
 
 MAX_WEEK_NUMBER = 75 # TODO - load this from a config file
 MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
@@ -16,10 +17,10 @@ class _Checkin:
         
         self.week_number = self.check_week_number(week_number)
         self.callsign = self.check_callsign(callsign)
-        self.mode = self.check_mode(transport_mode, gw_frequency)
+        self.transport_mode = self.check_mode(transport_mode, gw_frequency)
 
         (canonical_gateway, canonical_frequency) = \
-            gateway_validator(gateway, gw_frequency, self.mode)
+            gateway_validator(gateway, gw_frequency, self.transport_mode)
         self.gateway = canonical_gateway
         self.frequency = self.check_frequency(canonical_frequency)
         self.location = capwords(location)
@@ -43,12 +44,12 @@ class _Checkin:
         return canonical_week_num
 
     #-------------------------------------------------------------------------
-    def check_mode(self, mode: str, freq: str) -> str:
-        checked_mode = mode_validator(mode, freq)
+    def check_mode(self, transport_mode: str, freq: str) -> str:
+        checked_mode = mode_validator(transport_mode, freq)
         if checked_mode is not None:
-            self.mode = checked_mode
+            self.transport_mode = checked_mode
         else:
-            raise ValueError(f'Mode is invalid: {self.mode}')
+            raise ValueError(f'Mode is invalid: {self.transport_mode}')
         return checked_mode
 
     #--------------------------------------------------------------------------
@@ -60,33 +61,44 @@ class _Checkin:
 
     #-------------------------------------------------------------------------
     def __repr__(self) -> str:
-        return f'{self.week_number},{self.callsign},{self.mode},'\
+        return f'{self.week_number},{self.callsign},{self.transport_mode},'\
             f'{self.gateway},{self.frequency:.4f},{self.location},'\
             f'{self.state}'
     #-------------------------------------------------------------------------
     def __str__(self) -> str:
         return self.__repr__()
     
+    def as_dict(self) -> dict:
+        return {'week_number' : self.week_number,
+                   'callsign' : self.callsign,
+                   'transport_mode' : self.transport_mode,
+                   'gateway' : self.gateway,
+                   'frequency' : self.frequency,
+                   'location' : self.location,
+                   'state' : self.state}
 #------------------------------------------------------------------------------
 # Module interface below
 #------------------------------------------------------------------------------
 def add_checkin(week_number: int,
                 callsign: str,
                 transport_mode: str,
-                rms_id: str,
-                rms_frequency: float,
+                gateway: str,
+                frequency: float,
                 location: str,
                 state: str):
     
     check_in = _Checkin(week_number, 
                     callsign,
                     transport_mode, 
-                    rms_id,
-                    rms_frequency,
+                    gateway,
+                    frequency,
                     location,
                     state)
     
     _all_checkins.append(check_in)
+    checkin_dict = check_in.as_dict()
+    save_checkin(checkin_dict)
+
 #------------------------------------------------------------------------------
 def get_last_checkin_repr() -> str:
     if len(_all_checkins) == 0:
