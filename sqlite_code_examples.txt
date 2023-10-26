@@ -1,0 +1,20 @@
+-- Creates the main table that holds distinct check-ins to the net
+CREATE TABLE if not exists checkins(week_number INTEGER, 
+                                       callsign TEXT, 
+                                           mode TEXT, 
+                                        gateway TEXT, 
+                                      frequency REAL,
+                                       location TEXT,
+                                          state TEXT);
+
+
+-- .mode changes the way the output is formatted. There are lots of options!
+ .mode markdown
+ .mode json
+ .help mode
+
+-- gets the number of distinct callsigns checking in for each week. 
+select week_number, count(*)
+  from (select distinct callsign, week_number 
+          from checkins) 
+ group by week_number;
