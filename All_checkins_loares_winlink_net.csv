@@ -1,4 +1,4 @@
-Week, Callsign, Mode, RMS, Frequency, Location, State
+week_number, callsign, transport_mode, gateway, frequency, location, state
 1, AD7EF, Telnet, N/A, 0.000, Oregon City, OR
 1, K0AXS, Telnet, N/A, 0.000, Uplands,
 1, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
