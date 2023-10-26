@@ -8,11 +8,17 @@
 # 
 # -----------------------------------------------------------------------------
 import argparse
-import sys
+import csv
 from checkins import add_checkin, get_last_checkin_repr
 
 CHECKIN_NUM_COLUMNS = 7 # TODO - set this value via a configuration file
-
+CHECKIN_FIELD_NAMES = ('week_number', 
+                       'callsign',
+                       'transport_mode',
+                       'rms_gateway',
+                       'rms_frequency',
+                       'location',
+                       'state')
 # ------------------------------------------------------------------------------
 def process_command_line():
     parser = argparse.ArgumentParser(description='Clean a check-in CSV file.')
@@ -32,42 +38,29 @@ def process_command_line():
                         help='A list of file names to process')
     args = parser.parse_args()
     return (args.nheaders, args.file_list)
-
-
 # -----------------------------------------------------------------------------
+
 def scan_file(csv_file_name, num_header_lines):
-    with open(csv_file_name, "r") as csv:
-        total_lines_processed = 0
+    with open(csv_file_name, "r", newline='') as csvfile:
+        reader = csv.DictReader(csvfile, fieldnames=CHECKIN_FIELD_NAMES)
         header_line_count = 0
-        for line in csv:
-            trimmed_line = line.rstrip('\n')
+        for checkin_line in reader:
             if header_line_count < num_header_lines:
                 header_line_count += 1
                 continue
 
-            raw_checkin = [col.strip() for col in trimmed_line.split(',')]
+            if len(checkin_line.keys()) != CHECKIN_NUM_COLUMNS:
+                raise ValueError(f'Check-in has invalid num cols: {checkin_line}')
+            clean_checkin_line = dict((k.strip(), v.strip()) for k, v in checkin_line.items())
+            add_checkin(int(clean_checkin_line['week_number']),
+                        clean_checkin_line['callsign'],
+                        clean_checkin_line['transport_mode'],
+                        clean_checkin_line['rms_gateway'],
+                        float(clean_checkin_line['rms_frequency']),
+                        clean_checkin_line['location'],
+                        clean_checkin_line['state'])
 
-            if len(raw_checkin) != CHECKIN_NUM_COLUMNS:
-                raise ValueError(f'Check-in has invalid num cols: {raw_checkin}')
-
-            (week_num, 
-             callsign,
-             mode,
-             rms,
-             freq,
-             location,
-             state) = tuple(raw_checkin)
-            
-            add_checkin(int(week_num), callsign, mode, rms, \
-                        float(freq), location, state)
-            
-            total_lines_processed += 1
-            # print(f'{total_lines_processed}, {get_last_checkin_repr()}')
             print(f'{get_last_checkin_repr()}')
-        # print(f'\n{csv_file_name}: total checkins processed '\
-        #     f'- {total_lines_processed}')
-        # print()
-        
 
 # ------------------------------------------------------------------------------
 def main():

@@ -8,13 +8,12 @@ MAX_WEEK_NUMBER = 75 # TODO - load this from a config file
 MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
 
 _all_checkins = []
-_last_checkin = None
 
 class _Checkin:
     def __init__(self, week_number: int, callsign: str, transport_mode: str,
                  gateway: str, gw_frequency: float, location: str,
                  state: str ) -> None:
-        # print(f'{week_number}, {callsign}, {transport_mode}, {gateway}')
+        
         self.week_number = self.check_week_number(week_number)
         self.callsign = self.check_callsign(callsign)
         self.mode = self.check_mode(transport_mode, gw_frequency)
@@ -79,7 +78,6 @@ def add_checkin(week_number: int,
                 location: str,
                 state: str):
     
-    global _last_checkin
     check_in = _Checkin(week_number, 
                     callsign,
                     transport_mode, 
@@ -87,13 +85,13 @@ def add_checkin(week_number: int,
                     rms_frequency,
                     location,
                     state)
-    _last_checkin = check_in
+    
     _all_checkins.append(check_in)
 #------------------------------------------------------------------------------
 def get_last_checkin_repr() -> str:
     if len(_all_checkins) == 0:
         return "No checkins"
     else:
-        return str(_last_checkin)
+        return str(_all_checkins[-1])
 #------------------------------------------------------------------------------
 __all__ = ['add_checkin', 'get_last_checkin_repr']
