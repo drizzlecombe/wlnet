@@ -1,8 +1,8 @@
 Week, Callsign, Mode, RMS, Frequency, Location, State
 1, AD7EF, Telnet, N/A, 0.000, Oregon City, OR
 1, K0AXS, Telnet, N/A, 0.000, Uplands,
-1, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
-1, KD7PFH, Telnet, N/A, 0.000, Childs Road,
+1, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
+1, KD7PFH, Telnet, N/A, 0.000, Childs,
 1, KF7KXX, VARA FM, KF7KXX, 145.530, Palisades,
 1, KI7LAG, VARA FM, W7BVT-10, 145.020, Beaverton, OR
 1, KJ7JBE, Telnet, N/A, 0.000, Westlake,
@@ -15,8 +15,8 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 1, WH6EWE, VARA FM, N1ACW-10, 145.530, Rosewood,
 2, AD7EF, VARA FM, N1ACW-10, 145.530, Oregon City, OR
 2, K0AXS, Telnet, N/A, 0.000, Uplands,
-2, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
-2, KD7PFH, Telnet, N/A, 0.000, Childs Road,
+2, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
+2, KD7PFH, Telnet, N/A, 0.000, Childs,
 2, KF0RST, VARA FM, N1ACW-10, 145.530, Mountain Park,
 2, KF7KXX, Telnet, N/A, 0.000, Palisades,
 2, KJ7YYW, Packet, K7YFJ-10, 144.940, Battle Ground, WA
@@ -38,11 +38,11 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 3, KJ7JBE, Vara FM, N1ACW-10, 145.530, Westlake,
 3, KI7DGC, Telnet, N/A, 0.000, Westlake,
 3, KF7KXX, Telnet, N/A, 0.000, Palisades,
-3, KD7PFH, Telnet, N/A, 0.000, Childs Road,
-3, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
+3, KD7PFH, Telnet, N/A, 0.000, Childs,
+3, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
 3, AD7EF, VARA FM, N1ACW-10, 145.530, Oregon City, OR
 4, AD7EF, PACTOR 3, KA7RHC, 3.5935, Oregon City, OR
-4, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
+4, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
 4, KI7DGC, VARA FM, N1ACW-10, 145.530, Westlake,
 4, KJ7JBE, VARA-FM, N1ACW-10, 145.530, Westlake,
 4, KJ7JCR, Telnet, N/A, 0.000, Palisades,
@@ -66,7 +66,7 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 6, KJ7JBE, Telnet, N/A, 0.000, Westlake,
 6, KJ7JCR, Telnet, N/A, 0.000, Palisades,
 6, KF7KXX, Telnet, N/A, 0.000, Palisades,
-6, KD7PFH, Telnet, N/A, 0.000, Childs Road,
+6, KD7PFH, Telnet, N/A, 0.000, Childs,
 6, K0AXS, Telnet, N/A, 0.000, Uplands,
 6, WH6EWE, VARA FM, N1ACW-10, 145.530, Rosewood,
 6, N7LIM, Vara FM, N1ACW-10, 145.53, Lake Grove,
@@ -95,7 +95,7 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 8, KI7LAG, Vara FM, W7BVT-10, 145.020, Beaverton, OR
 9, AD7EF, PACTOR, N7LEW, 3.587, Oregon City, OR
 9, K0AXS, VARA FM, W7BVT-10, 145.020, Uplands,
-9, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
+9, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
 9, KF7KXX, VARA FM, N1ACW-10, 145.530, Palisades,
 9, KI7DGC, Vara FM, N1ACW-10, 145.530, Westlake,
 9, KI7LAG, VARA FM, W7BVT-10, 145.020, Beaverton, OR
@@ -112,9 +112,9 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 10, KJ7JCR, Telnet, N/A, 0.000, Palisades,
 10, WA6ZLV, Telnet, N/A, 0.000, Old Town,
 10, WH6EWE, Packet, N1ACW-10, 145.530, Rosewood,
-10, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
+10, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
 10, WA6DOZ, Vara FM, N1ACW-10, 145.530, First Addition,
-10, KD7PFH, Telnet, N/A, 0.000, Childs Rd,
+10, KD7PFH, Telnet, N/A, 0.000, Childs,
 11, WA6ZLV, Telnet, N/A, 0.000, Old Town,
 11, WA6GBW, VARA FM, KI7QIB-11, 145.010, Portland, Oregon
 11, WA6DOZ, VARA FM, N1ACW-10, 145.5300, First Addition, Oregon
@@ -126,16 +126,16 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 11, KI7LAG, VARA FM, K7MCE-10, 145.070, Lake Oswego, Oregon
 11, KI7DGC, Vara FM, N1ACW-10, 145.530, Westlake,
 11, KF7KXX, Telnet, N/A, 0.000, Palisades,
-11, KD7PFH, Telnet, N/A, 0.000, Childs Road,
+11, KD7PFH, Telnet, N/A, 0.000, Childs,
 11, AD7EF, VARA FM, KX7YT-10, 144.990, Oregon City, Oregon
 11, WH6EWE, VARA FM, N1ACW-10, 145.530, Rosewood,
 12, W6AGZ, VARA FM, W7BVT-10, 145.020, Rivergrove, Oregon
 12, KJ7YYW, Telnet, N/A, 0.000, Battle Ground, Oregon
 12, K0AXS, VARA FM, N1ACW-10, 145.530, Uplands,
 12, KI7DGC, VARA FM, N1ACW-10, 145.530, Westlake,
-12, KD7PFH, Telnet, N/A, 0.000, Childs Rd,
+12, KD7PFH, Telnet, N/A, 0.000, Childs,
 12, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town,
-12, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Rd,
+12, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
 12, KF7KXX, VARA FM, N1ACW-10, 145.530, Palisades,
 12, N1ACW, VARA FM, K5VP-11, 144.940, Palisades,
 12, KJ7JCR, Telnet, N/A, 0.000, Palisades,
@@ -145,8 +145,8 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 13, W6AGZ, VARA FM, W7BVT-10, 145.020, Rivergrove, Oregon
 13, N1ACW, Packet, KD7ZDO-10, 145.570, Palisades,
 13, K0AXS, Telnet, N/A, 0.000, Uplands,
-13, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
-13, KD7PFH, Telnet, N/A, 0.000, Childs Road,
+13, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
+13, KD7PFH, Telnet, N/A, 0.000, Childs,
 13, KF7KXX, telnet, N/A, 0.000, Palisades,
 13, KI7DGC, VARA FM, N1ACW-10, 145.530, Westlake,
 13, KI7LAG, VARA FM, W7BVT-10, 145.020, Beaverton, OR
@@ -219,7 +219,7 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 18, KI7DGC, Vara FM, W7YAM-10, 144.970, Westlake,
 18, WA6GBW, Telnet, N/A, 0.000, Portland, Oregon
 18, KJ7JCR, Telnet, N/A, 0.000, Palisades,
-18, KD7DNM, Telnet, N/A, 0.000, Childs Road,
+18, KD7DNM, Telnet, N/A, 0.000, Childs,
 18, WA6DOZ, Packet, N1ACW-10, 145.530, First Addition,
 18, KJ7YYW, Packet, KG7AV-10, 145.030, Deschutes, OR
 18, KI7LAG, Packet, KD7ZDO-10, 145.570, Lake Oswego, OR
@@ -246,8 +246,8 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 20, KI7LAG, Vara FM, WC7EOC-10, 144.980, Lake Oswego, OR
 20, KI7DGC, Vara FM, N1ACW-10, 145.530, Westlake,
 20, KF7KXX, VARA FM, N1ACW-10, 145.530, Palisades,
-20, KD7PFH, Telnet, N/A, 0.000, Childs Road,
-20, KD7DNM, Telnet, N/A, 0.000, Childs Road,
+20, KD7PFH, Telnet, N/A, 0.000, Childs,
+20, KD7DNM, Telnet, N/A, 0.000, Childs,
 21, W6AGZ, VARA FM, W7BVT-10, 145.020, RIVERGROVE, OR
 21, KI7DGC, Vara FM, KI7QIB-11, 145.010, Westlake,
 21, N1ACW, VARA FM, W7YAM-10, 144.970, Clackamas, Oregon
@@ -260,14 +260,14 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 21, KF7KXX, VARA FM, N1ACW-10, 145.530, Palisades,
 21, KJ7JCR, TELNET, N/A, 0.000, PALISADES,
 21, KK7MLS, VARA FM, W7YAM-10, 144.970, OAK CREEK,
-22, KD7DNM, Telnet, N/A, 0.000, Childs Road,
-22, KD7PFH, Telnet, N/A, 0.000, Childs Rd,
+22, KD7DNM, Telnet, N/A, 0.000, Childs,
+22, KD7PFH, Telnet, N/A, 0.000, Childs,
 22, KF7KXX, VARA FM, KX7YT-10, 144.990, Palisades,
 22, KI7DGC, Vara FM, N7TRY-2, 430.550, Westlake,
 22, KI7LAG, VARA FM, W7BVT-10, 145.020, Beaverton, OR
 22, KJ7JCR, TELNET, N/A, 0.000, PALISADES,
 22, KJ7YYW, Telnet, N/A, 0.000, Clark, NV
-22, KK7MLS, VARA FM, N1ACW-10, 145.530, OAK CREEK/LAKE OSWEGO, OR
+22, KK7MLS, VARA FM, N1ACW-10, 145.530, OAK CREEK,
 22, N1ACW, VARA FM, N7GV-10, 147.460, Pima, Arizona
 22, N7LIM, VARA FM, N1ACW-10, 145.530, Lake Grove,
 22, WA1TRH, Telnet, N/A, 0.000, Lake Oswego,
@@ -354,7 +354,7 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 31, KJ7YYW, VARA FM, N1ACW-10, 145.530, Battle Ground, Washington
 31, W6AGZ, TELNET, N/A, 0.000, RIVERGROVE, Oregon
 31, KI7DGC, Vara FM, W7YAM-10, 144.970, Westlake,
-32, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
+32, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
 32, KF7KXX, packet, N1ACW-10, 145.530, Palisades,
 32, KI7DGC, Packet, N1ACW-10, 145.530, Westlake,
 32, KI7LAG, VARA FM, W7BVT-10, 145.020, Beaverton, OR
@@ -476,8 +476,8 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 43, KI7LAG, VARA FM, K7LSC-10, 144.960, St. Helens, OR
 43, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town,
 43, KF7KXX, VARA FM, N1ACW-10, 145.530, Palisades,
-43, KD7DNM, Telnet, N/A, 0.000, Childs Road,
-43, KD7PFH, Telnet, N/A, 0.000, Childs Road,
+43, KD7DNM, Telnet, N/A, 0.000, Childs,
+43, KD7PFH, Telnet, N/A, 0.000, Childs,
 43, KK7MLS, VARA FM, N1ACW-10, 145.530, OAK CREEK,
 44, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town,
 44, WA6DOZ, VARA FM, N1ACW-10, 145.530, First Addition,
@@ -504,23 +504,23 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 46, WA1TRH, Telnet, N/A, 0.000, Lake Oswego, Oregon
 46, K0AXS, Telnet, N/A, 0.000, Uplands,
 46, KJ7JCR, Telnet, N/A, 0.000, PALISADES,
-46, KD7DNM, Telnet, N/A, 0.000, Childs Road,
-46, KD7PFH, Telnet, N/A, 0.000, Childs Rd,
+46, KD7DNM, Telnet, N/A, 0.000, Childs,
+46, KD7PFH, Telnet, N/A, 0.000, Childs,
 47, W6AGZ, VARA FM, W7BVT-10, 145.020, Rivergrove, OR
 47, WA6GBW, VARA FM, N1ACW-10, 145.030, PORTLAND, OR
 47, W6RKT, VARA FM, N1ACW-10, 145.530, Clark, WA
 47, KI7LAG, VARA FM, KD7ZDO-11, 145.770, Lake Oswego, OR
 47, KI7DGC, Vara FM, N1ACW-10, 145.530, Westlake,
-47, KD7PFH, Telnet, N/A, 0.000, Childs Road,
-47, KD7DNM, Telnet, N/A, 0.000, Childs Road,
+47, KD7PFH, Telnet, N/A, 0.000, Childs,
+47, KD7DNM, Telnet, N/A, 0.000, Childs,
 47, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town,
 47, KF7KXX, VARA FM, N1ACW-10, 145.530, Palisades,
 48, KI7LAG, VARA FM, KD7ZDO-12, 441.525, Lake Oswego, OR
 48, W3STM, VARA FM, N1ACW-10, 145.530, First Addition,
 48, W6RKT, VARA FM, W7YAM-10, 441.050, Clark, WA
 48, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town,
-48, KD7DNM, TELNET, N/A, 0.000, Childs Road,
-48, KD7PFH, TELNET, N/A, 0.000, Childs Road,
+48, KD7DNM, TELNET, N/A, 0.000, Childs,
+48, KD7PFH, TELNET, N/A, 0.000, Childs,
 48, KF7KXX, PACKET, KD7ZDO-10, 145.570, Palisades,
 48, KI7DGC, PACKET, N1ACW-10, 145.530, Westlake,
 48, KK7MLS, PACKET, N1ACW-10, 145.530, OAK CREEK,
@@ -529,16 +529,16 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 49, W3STM, VARA FM, K7MCE-10, 145.070, First Addition,
 49, KI7DGC, Vara FM, KE7NKR-10, 145.720, Westlake,
 49, W6RKT, VARA FM, KI7QIB-11, 145.010, Clark, WA
-49, KD7DNM, TELNET, N/A, 0.000, Childs Road,
+49, KD7DNM, TELNET, N/A, 0.000, Childs,
 49, WA6ZLV, VARA-FM, N1ACW-10, 145.530, Old Town,
 49, W6AGZ, VARA FM, W7BVT-10, 145.020, RIVERGROVE, OR
 49, KI7LAG, VARA FM, W7BVT-10, 145.020, Beaverton, OR
 49, N1ACW, VARA FM, WC7EOC-10, 144.980, Palisades,
-50, KD7DNM, VARA FM, W7YAM-10, 145.970, Childs Road,
-50, KD7DNM, VARA FM, W7BVT-10, 145.020, Childs Road,
-50, KD7DNM, VARA FM, KD7ZDO-11, 145.770, Childs Road,
-50, KD7DNM, VARA FM, W7YAM-12, 145.090, Childs Road,
-50, KD7PFH, VARA FM, KD7ZDO-11, 145.770, Childs Road,
+50, KD7DNM, VARA FM, W7YAM-10, 145.970, Childs,
+50, KD7DNM, VARA FM, W7BVT-10, 145.020, Childs,
+50, KD7DNM, VARA FM, KD7ZDO-11, 145.770, Childs,
+50, KD7DNM, VARA FM, W7YAM-12, 145.090, Childs,
+50, KD7PFH, VARA FM, KD7ZDO-11, 145.770, Childs,
 50, KF7KXX, vara fm, k7mce-10, 145.070, Palisades,
 50, KF7KXX, vara fm, ki7qib-11, 145.010, Palisades,
 50, KF7KXX, vara fm, w7bvt-10, 145.020, Palisades,
@@ -591,8 +591,8 @@ Week, Callsign, Mode, RMS, Frequency, Location, State
 51, KI7LAG, VARA FM, N7OGM-10, 145.050, Beaverton, OR
 51, KJ7JCR, TELNET, N/A, 000.000, Palisades,
 51, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town,
-51, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs Road,
-51, KD7PFH, Telnet, N/A, 000.00, Childs Road,
+51, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs,
+51, KD7PFH, Telnet, N/A, 000.00, Childs,
 51, W6AGZ, VARA FM, KI7QIB-11, 145.010, RIVERGROVE, OR
 51, W6RKT, VARA FM, N1ACW-10, 145.530, Clark, WA
 51, KI7DGC, Vara FM, W7BVT-10, 145.020, Westlake,
