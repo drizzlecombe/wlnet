@@ -1,5 +1,5 @@
 {
-    "raw_checkin_file": "All_checkins_loares_winlink_net.csv",
+    "raw_checkin_filename": "All_checkins_loares_winlink_net.csv",
     "raw_checkin_field_names": ["week_number", 
                                 "callsign",
                                 "transport_mode",
@@ -8,5 +8,5 @@
                                 "location",
                                 "state"],
     "num_header_lines": 1,
-    "database_name": "test.db"
+    "database_name": "testing123.db"
 }
