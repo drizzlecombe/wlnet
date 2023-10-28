@@ -18,3 +18,9 @@ select week_number, count(*)
   from (select distinct callsign, week_number 
           from checkins) 
  group by week_number;
+
+-- gets the number of times each callsign checked in
+select callsign, count(*) 
+ from (select distinct callsign, week_number
+         from checkins)
+ group by callsign;
