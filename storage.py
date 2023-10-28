@@ -1,7 +1,5 @@
 import sqlite3 as sql
 
-DATABASE_NAME = 'checkins.db'
-
 _db_filename = None
 _db_connection = None
 _db_started = False
