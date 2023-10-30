@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 import db_access as db
 
-def _get_weekly_participation(database_name: str) -> [()]:
+def _get_weekly_participation(database_name: str) -> list[tuple[int, int]]:
     db.start_database(database_name)
 
     q = """select week_number, count(*) 
@@ -20,7 +20,7 @@ def _get_weekly_participation(database_name: str) -> [()]:
     return result
 
 #------------------------------------------------------------------------------
-def median(l: []) -> float:
+def median(l: list[int]) -> float:
     llen = len(l)
     if llen == 0:
         return 0.0
@@ -30,13 +30,24 @@ def median(l: []) -> float:
     return float(sl[llen // 2])
 
 #------------------------------------------------------------------------------
-def draw_chart(x: [], y: []) -> None:
+def exponential_smooth(data: list[int], smoothing_factor: float=0.30) -> list[float]:
+    smoothed: list[float] = []
+    smoothed.append(float(data[0]))
+    for i in range(1, len(data)):
+        val: float = smoothing_factor * data[i] + \
+                    (1.0 - smoothing_factor) * smoothed[i - 1]
+        smoothed.append(val)
+    return smoothed
+
+#------------------------------------------------------------------------------
+def draw_chart(x: list[int], y: list[int], smoothed: list[float]) -> None:
     # Just one subplot in the figure. 
     fig, ax = plt.subplots(1, 1, figsize=(10, 3))
     # Plot the actual checkin values
     ax.plot(x, y, 'o:', ms='5', mec='1.0', linewidth='1.0', color='darkgreen', label='# checkins')
     # Plot the (hardwired) mean. TODO: Turn this into a function parameter
     ax.plot(x, [11] * len(x), '--', linewidth='1.0', color='darkred', label= 'mean')
+    ax.plot(x, smoothed, '-', linewidth='1.0', color='blue', label='smoothed')
     ax.set_title('Weekly participation in the LOARES Winlink net')
     ax.set_ylabel('Number of participants')
     ax.set_xlabel('Week number')
@@ -49,18 +60,23 @@ def main(database_name: str) -> None:
 
     num_weeks = 0
     participant_total = 0
-    wk_cnts = []
-    week = []
+    week_numbers: list[int] = []
+    week_checkin_counts: list[int] = []
     for (x, y) in xy_data:
         print(f'{x}, {y}')
         num_weeks += 1
         participant_total += y
-        week.append(x)
-        wk_cnts.append(y)
+        week_numbers.append(x)
+        week_checkin_counts.append(y)
+
+    smoothed_week_counts: list[float] = exponential_smooth(week_checkin_counts)    
     mean_participation = float(participant_total) / float(num_weeks)
+
+
     print(f'Mean participation = {mean_participation: 0.2f}')
-    print(f'Median participation = {median(wk_cnts): 0.2f}')
-    draw_chart(week, wk_cnts)
+    print(f'Median participation = {median(week_checkin_counts): 0.2f}')
+
+    draw_chart(week_numbers, week_checkin_counts, smoothed_week_counts)
 
 #------------------------------------------------------------------------------
 # Programme entry point
