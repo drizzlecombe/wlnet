@@ -31,12 +31,16 @@ def median(l: []) -> float:
 
 #------------------------------------------------------------------------------
 def draw_chart(x: [], y: []) -> None:
+    # Just one subplot in the figure. 
     fig, ax = plt.subplots(1, 1, figsize=(10, 3))
+    # Plot the actual checkin values
     ax.plot(x, y, 'o:', ms='5', mec='1.0', linewidth='1.0', color='darkgreen', label='# checkins')
+    # Plot the (hardwired) mean. TODO: Turn this into a function parameter
     ax.plot(x, [11] * len(x), '--', linewidth='1.0', color='darkred', label= 'mean')
     ax.set_title('Weekly participation in the LOARES Winlink net')
     ax.set_ylabel('Number of participants')
     ax.set_xlabel('Week number')
+    # Turn on the legend. Default placement is fine.
     ax.legend()
     plt.show()
 #------------------------------------------------------------------------------
