@@ -18,12 +18,12 @@ def close_database() -> None:
         _db_connection.close()
 
 #------------------------------------------------------------------------------
-def query(sqlquery: str) -> None:
+def query(sqlquery: str) -> [()]:
     if not _db_started:
         raise Exception('Cannot run query if the DB is not running')
     cursor = _db_connection.cursor()
     cursor.execute(sqlquery)
-    print(cursor.fetchall())
+    return cursor.fetchall()
 #------------------------------------------------------------------------------
 
 __all__ = ['start_database', 'close_database', 'query']
