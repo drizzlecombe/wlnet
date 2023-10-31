@@ -8,5 +8,5 @@
                                 "location",
                                 "state"],
     "num_header_lines": 1,
-    "database_name": "./db/checkins_test.db"
+    "database_name": "./db/checkins_week_52.db"
 }
