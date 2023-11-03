@@ -134,4 +134,4 @@ def main(database_name: str) -> None:
 # Programme entry point
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
-    main('../db/checkins_test.db')
+    main('../db/checkins_week_52.db')
