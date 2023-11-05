@@ -14,18 +14,23 @@ CREATE TABLE if not exists checkins(week_number INTEGER,
  .help mode
 
 -- gets the number of distinct callsigns checking in for each week. 
+-- Note that the subquery is important because this limits/filters multiple
+-- checkins for an individual week. So if N0CAL checked in three times, the
+-- subquery acknowledges just one checkin for the week.
 select week_number, count(*)
   from (select distinct callsign, week_number 
           from checkins) 
  group by week_number;
 
--- gets the number of times each callsign checked in
+-- gets the number of times each callsign checked in. Only count one check-in
+-- per week.
 -- TODO: may want to limit this to a specific time period (week_number between
 -- 1 and 52). Remember, between is inclusive.
 select callsign, count(*) 
- from (select distinct callsign, week_number
-         from checkins)
- group by callsign;
+  from (select distinct callsign, week_number
+          from checkins)
+ group by callsign
+ order by count(*) desc;
 
 --
 -- TRANSPORT MODE QUERIES
@@ -44,3 +49,15 @@ select week_number, count(*)
   from checkins
  where transport_mode = 'VARA FM'
  group by week_number order by week_number asc;
+
+-- Create a list of the number of checkins made using each transport mode used
+-- by each individual operator. The subquery find each week that a given
+-- callsign checks in at least once using a specific transport mode. This is
+-- true even if the operator checks in more than once using a specific
+-- transport mode, like VARA FM, during a specific week. 
+select callsign, transport_mode, count(*)
+  from (select distinct callsign, transport_mode, week_number
+          from checkins) 
+ group by callsign, transport_mode
+ order by callsign, transport_mode;
+
