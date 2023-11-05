@@ -64,6 +64,17 @@ select callsign, count(*)
  group by callsign
  order by count(*) desc;
 
+-- This query is pretty much te same as that one above except it takes into
+-- consideration callsign changes. For example, KJ7YYW -> W6RKT and KK7JZB ->
+-- W3STM
+
+select cs, count(*) as cnt 
+  from (select distinct current_callsign as cs, week_number 
+          from checkins, callsign_map as cm 
+         where checkins.callsign = cm.checkin_callsign)
+ group by cs
+ order by cnt desc;
+
 --
 -- TRANSPORT MODE QUERIES
 --
