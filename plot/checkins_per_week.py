@@ -68,7 +68,6 @@ def draw_checkins_per_week_bar(num_checkins_dist: list[tuple[int, int]]) \
     # Just one subplot in the figure.
     fig, ax = plt.subplots(1, 1, figsize=(6, 4))
     
-
     # Hopefully this is enough colours for the number of bars in the chart. If
     # not , the colours will wrap.
     # TODO: Find a way of interpolating between darkred and darkgreen using
