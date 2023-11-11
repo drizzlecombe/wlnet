@@ -47,8 +47,11 @@ def scan_file(csv_file_name: str, num_header_lines: int, col_names: list[str]) -
                 continue
 
             if len(checkin_line.keys()) != num_cols:
-                raise ValueError(f'Check-in has invalid num cols: {checkin_line}')
-            clean_checkin_line = dict((k.strip(), v.strip()) for k, v in checkin_line.items())
+                raise ValueError('Check-in has invalid num cols: '
+                                 f'{checkin_line}')
+            clean_checkin_line = dict((k.strip(), v.strip()) \
+                                      for k, v in checkin_line.items())
+            
             add_checkin(int(clean_checkin_line[col_names[0]]),
                         clean_checkin_line[col_names[1]],
                         clean_checkin_line[col_names[2]],
@@ -56,7 +59,7 @@ def scan_file(csv_file_name: str, num_header_lines: int, col_names: list[str]) -
                         float(clean_checkin_line[col_names[4]]),
                         clean_checkin_line[col_names[5]],
                         clean_checkin_line[col_names[6]])
-
+            
             print(f'{get_last_checkin_repr()}')
 
 # -----------------------------------------------------------------------------
