@@ -3,18 +3,23 @@ from string import capwords
 from callsign_processing import validate_callsign
 from transport_modes import mode_validator
 from gateway import gateway_validator
+from location import neighbourhood_check
 from storage import save_checkin
 
 MAX_WEEK_NUMBER = 75 # TODO - load this from a config file
 MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
 
+
+# -----------------------------------------------------------------------------
+# All the checkins
+# -----------------------------------------------------------------------------
 _all_checkins = []
 
 class _Checkin:
     def __init__(self, week_number: int, callsign: str, transport_mode: str,
                  gateway: str, gw_frequency: float, location: str,
                  state: str ) -> None:
-        
+
         self.week_number = self.check_week_number(week_number)
         self.callsign = self.check_callsign(callsign)
         self.transport_mode = self.check_mode(transport_mode, gw_frequency)
@@ -23,27 +28,27 @@ class _Checkin:
             gateway_validator(gateway, gw_frequency, self.transport_mode)
         self.gateway = canonical_gateway
         self.frequency = self.check_frequency(canonical_frequency)
-        self.location = capwords(location)
+        self.location = self.check_location(location)
         if len(state) == 2:
             self.state = state.upper()
         else:
             self.state = state.capitalize()
 
-    #-------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def check_frequency(self, frequency: str) -> float:
         canonical_frequency = float(frequency)
         if canonical_frequency >= 0.0 and canonical_frequency > MAX_FREQUENCY:
             raise ValueError(f'Invalid frequency: {frequency}')
         return canonical_frequency
 
-    #-------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def check_week_number(self, week_number: str) -> int:
         canonical_week_num = int(week_number)
         if canonical_week_num < 0 or canonical_week_num > MAX_WEEK_NUMBER:
             raise ValueError(f'Invalid week number: {self.week_number}')
         return canonical_week_num
 
-    #-------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def check_mode(self, transport_mode: str, freq: str) -> str:
         checked_mode = mode_validator(transport_mode, freq)
         if checked_mode is not None:
@@ -59,15 +64,25 @@ class _Checkin:
             raise ValueError(f'Invalid callsign: {callsign}')
         return canonical_callsign
 
-    #-------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    def check_location(self, location: str) -> str:
+        (best_guess, likelihood) = neighbourhood_check(location)
+        if likelihood > 0.7:
+            print(f'Hit  ({likelihood}): {location} -> {best_guess}')
+            return best_guess
+        else:
+            print(f'Miss ({likelihood}): {location} (skip nearest: {best_guess}) -> {capwords(location)}')
+            return capwords(location)
+        
+    #--------------------------------------------------------------------------
     def __repr__(self) -> str:
         return f'{self.week_number},{self.callsign},{self.transport_mode},'\
             f'{self.gateway},{self.frequency:.4f},{self.location},'\
             f'{self.state}'
-    #-------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def __str__(self) -> str:
         return self.__repr__()
-    
+
     def as_dict(self) -> dict:
         return {'week_number' : self.week_number,
                    'callsign' : self.callsign,
@@ -86,15 +101,15 @@ def add_checkin(week_number: int,
                 frequency: float,
                 location: str,
                 state: str):
-    
-    check_in = _Checkin(week_number, 
+
+    check_in = _Checkin(week_number,
                     callsign,
-                    transport_mode, 
+                    transport_mode,
                     gateway,
                     frequency,
                     location,
                     state)
-    
+
     _all_checkins.append(check_in)
     checkin_dict = check_in.as_dict()
     save_checkin(checkin_dict)
