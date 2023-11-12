@@ -21,7 +21,7 @@ class _Checkin:
                  transport_mode: str,
                  gateway: str,
                  gw_frequency: float,
-                 location: str,
+                 neighbourhood: str,
                  county: str,
                  state: str ) -> None:
 
@@ -33,7 +33,7 @@ class _Checkin:
             gateway_validator(gateway, gw_frequency, self.transport_mode)
         self.gateway = canonical_gateway
         self.frequency = self.check_frequency(canonical_frequency)
-        self.location = self.check_location(location)
+        self.neighbourhood = self.check_location(neighbourhood)
         self.county = county
         if len(state) == 2:
             self.state = state.upper()
@@ -71,19 +71,23 @@ class _Checkin:
         return canonical_callsign
 
     #--------------------------------------------------------------------------
-    def check_location(self, location: str) -> str:
-        (best_guess, likelihood) = neighbourhood_check(location)
+    def check_location(self, neighbourhood: str) -> str:
+        (best_guess, likelihood) = neighbourhood_check(neighbourhood)
         if likelihood > 0.7:
-            print(f'Hit  ({likelihood}): {location} -> {best_guess}')
+            # print(f'Hit  ({likelihood}): {neighbourhood} -> {best_guess}')
             return best_guess
+        elif neighbourhood.upper() == 'N/A':
+            # This is where there is no neighbourhood in Lake Oswego associated
+            # with the checkin. I.e. the checkin came from outside Lake Oswego.
+            return 'N/A'
         else:
-            print(f'Miss ({likelihood}): {location} (skip nearest: {best_guess}) -> {capwords(location)}')
-            return capwords(location)
+            #print(f'Miss ({likelihood}): {neighbourhood} (skip nearest: {best_guess}) -> {capwords(neighbourhood)}')
+            return capwords(neighbourhood)
         
     #--------------------------------------------------------------------------
     def __repr__(self) -> str:
         return f'{self.week_number},{self.callsign},{self.transport_mode},'\
-            f'{self.gateway},{self.frequency:.4f},{self.location},'\
+            f'{self.gateway},{self.frequency:.4f},{self.neighbourhood},'\
             f'{self.state}'
     #--------------------------------------------------------------------------
     def __str__(self) -> str:
@@ -95,7 +99,7 @@ class _Checkin:
                    'transport_mode' : self.transport_mode,
                    'gateway' : self.gateway,
                    'frequency' : self.frequency,
-                   'location' : self.location,
+                   'neighbourhood' : self.neighbourhood,
                    'county' : self.county,
                    'state' : self.state}
 #------------------------------------------------------------------------------
@@ -106,7 +110,7 @@ def add_checkin(week_number: int,
                 transport_mode: str,
                 gateway: str,
                 frequency: float,
-                location: str,
+                neighbourhood: str,
                 county: str,
                 state: str):
 
@@ -115,7 +119,7 @@ def add_checkin(week_number: int,
                     transport_mode,
                     gateway,
                     frequency,
-                    location,
+                    neighbourhood,
                     county,
                     state)
 

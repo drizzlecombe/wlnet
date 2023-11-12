@@ -4,41 +4,11 @@ CREATE TABLE if not exists checkins(week_number INTEGER,
                                            mode TEXT, 
                                         gateway TEXT, 
                                       frequency REAL,
-                                       location TEXT,
+                                  neighbourhood TEXT,
+                                         county TEXT,
                                           state TEXT);
 
--- Maps callsigns used to checkin to new callsigns received after the checkin
--- was made. Most callsigns will map directly onto themselves.
-CREATE TABLE if not exists callsign_map(checkin_callsign TEXT, 
-                                        current_callsign TEXT);
 
-INSERT INTO callsign_map (checkin_callsign, current_callsign)
-VALUES
-('AD7EF', 'AD7EF'),
-('K0AXS', 'K0AXS'),
-('KD7DNM', 'KD7DNM'),
-('KD7PFH', 'KD7PFH'),
-('KF7KXX', 'KF7KXX'),
-('KI7LAG', 'KI7LAG'),
-('KJ7JBE', 'KJ7JBE'),
-('KJ7JCR', 'KJ7JCR'),
-('KJ7YYW', 'W6RKT'),
-('N1ACW', 'N1ACW'),
-('WA6DOZ', 'WA6DOZ'),
-('WA6GBW', 'WA6GBW'),
-('WA6ZLV', 'WA6ZLV'),
-('WH6EWE', 'WH6EWE'),
-('KF0RST', 'KF0RST'),
-('KI7DGC', 'KI7DGC'),
-('N7LIM', 'N7LIM'),
-('WA1TRH', 'WA1TRH'),
-('W6AGZ', 'W6AGZ'),
-('KK7JZB', 'W3STM'),
-('KK7MLS', 'KK7MLS'),
-('AI7MI', 'AI7MI'),
-('W7MML', 'W7MML'),
-('W3STM', 'W3STM'),
-('W6RKT', 'W6RKT');
 
 -- .mode changes the way the output is formatted. There are lots of options!
  .mode markdown
