@@ -16,8 +16,13 @@ MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
 _all_checkins = []
 
 class _Checkin:
-    def __init__(self, week_number: int, callsign: str, transport_mode: str,
-                 gateway: str, gw_frequency: float, location: str,
+    def __init__(self, week_number: int,
+                 callsign: str,
+                 transport_mode: str,
+                 gateway: str,
+                 gw_frequency: float,
+                 location: str,
+                 county: str,
                  state: str ) -> None:
 
         self.week_number = self.check_week_number(week_number)
@@ -29,6 +34,7 @@ class _Checkin:
         self.gateway = canonical_gateway
         self.frequency = self.check_frequency(canonical_frequency)
         self.location = self.check_location(location)
+        self.county = county
         if len(state) == 2:
             self.state = state.upper()
         else:
@@ -90,6 +96,7 @@ class _Checkin:
                    'gateway' : self.gateway,
                    'frequency' : self.frequency,
                    'location' : self.location,
+                   'county' : self.county,
                    'state' : self.state}
 #------------------------------------------------------------------------------
 # Module interface below
@@ -100,6 +107,7 @@ def add_checkin(week_number: int,
                 gateway: str,
                 frequency: float,
                 location: str,
+                county: str,
                 state: str):
 
     check_in = _Checkin(week_number,
@@ -108,6 +116,7 @@ def add_checkin(week_number: int,
                     gateway,
                     frequency,
                     location,
+                    county,
                     state)
 
     _all_checkins.append(check_in)

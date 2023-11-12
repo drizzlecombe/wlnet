@@ -29,6 +29,7 @@ def create_checkin_table() -> None:
                     gateway TEXT, 
                     frequency REAL,
                     location TEXT,
+                    county TEXT,
                     state TEXT)""")
     _db_connection.commit()
 
@@ -50,6 +51,7 @@ def save_checkin(checkin: dict) -> None:
                    :gateway,
                    :frequency,
                    :location,
+                   :county,
                    :state)""", checkin)
     _db_connection.commit()
 #------------------------------------------------------------------------------

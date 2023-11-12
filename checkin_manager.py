@@ -58,7 +58,8 @@ def scan_file(csv_file_name: str, num_header_lines: int, col_names: list[str]) -
                         clean_checkin_line[col_names[3]],
                         float(clean_checkin_line[col_names[4]]),
                         clean_checkin_line[col_names[5]],
-                        clean_checkin_line[col_names[6]])
+                        clean_checkin_line[col_names[6]],
+                        clean_checkin_line[col_names[7]])
             
             print(f'{get_last_checkin_repr()}')
 
