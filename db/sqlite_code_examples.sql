@@ -15,13 +15,29 @@ CREATE TABLE if not exists checkins(week_number INTEGER,
  .mode json
  .help mode
 
+--
+-- The number of callsigns checking in over a specific period in total
+--
+select count(*)
+  from (select distinct callsign, week_number 
+          from checkins
+          where week_number between 1 and 52);
+
+-- Number of duplicate checkins in a period.
+ select sum(cnt)
+   from (select callsign, week_number, count(*) as cnt 
+           from checkins 
+          group by callsign, week_number
+         having count(*) > 1);
+
 -- gets the number of distinct callsigns checking in for each week. 
 -- Note that the subquery is important because this limits/filters multiple
 -- checkins for an individual week. So if N0CAL checked in three times, the
 -- subquery acknowledges just one checkin for the week.
 select week_number, count(*)
   from (select distinct callsign, week_number 
-          from checkins) 
+          from checkins
+          where week_number between 1 and 52) 
  group by week_number;
 
 -- gets the number of times each callsign checked in. Only count one check-in
@@ -34,27 +50,30 @@ select callsign, count(*)
  group by callsign
  order by count(*) desc;
 
--- This query is pretty much te same as that one above except it takes into
--- consideration callsign changes. For example, KJ7YYW -> W6RKT and KK7JZB ->
--- W3STM
-
-select cs, count(*) as cnt 
-  from (select distinct current_callsign as cs, week_number 
-          from checkins, callsign_map as cm 
-         where checkins.callsign = cm.checkin_callsign)
- group by cs
- order by cnt desc;
+-- Which neighbourhoods are busiest in the net? Remember that operators
+-- checking in from outside Lake Oswego have the neighbourhood assigned as N/A.
+-- Note that this query is limited to the first year of operation.
+select neighbourhood as nh, count(*) as c 
+  from (select distinct week_number, callsign, neighbourhood 
+                   from checkins
+                  where week_number between 1 and 52)
+ where nh != 'N/A' 
+ group by nh 
+ order by c desc;
 
 --
 -- TRANSPORT MODE QUERIES
 --
 
--- get the count of all checkins for each transport mode. Limited by time span
-select transport_mode, count(*)
-  from checkins
- where week_number between 1 and 52
- group by transport_mode
- order by count(*);
+-- get the count of all the distinct checkins for each transport mode. Limited
+-- by time span
+select t, count(*) 
+ from (select distinct callsign, week_number, transport_mode as t 
+         from checkins
+        where week_number
+      between 1 and 52)
+group by t 
+order by count(*) desc;
 
 -- Get the weekly count of checkins for a given transport mode.
 -- Substitute 'VARA FM' for 'TELNET' or 'PACKET'
@@ -69,11 +88,10 @@ select week_number, count(*)
 -- true even if the operator checks in more than once using a specific
 -- transport mode, like VARA FM, during a specific week. 
 select cs, mode, count(*)
-  from (select distinct cm.current_callsign as cs, 
+  from (select distinct callsign as cs, 
                         transport_mode as mode, 
                         week_number
-          from checkins, callsign_map as cm
-         where checkins.callsign = cm.checkin_callsign) 
+          from checkins) 
  group by cs, mode
  order by cs, mode;
 
