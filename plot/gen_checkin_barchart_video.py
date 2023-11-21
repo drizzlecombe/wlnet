@@ -18,7 +18,8 @@ def get_total_checkins_per_week(database_name: str) -> \
 
     q = """select week_number, count(*) 
              from (select distinct callsign, week_number
-                     from checkins)
+                     from checkins
+                     where week_number between 1 and 52)
             group by week_number
             order by week_number asc"""
     
@@ -43,7 +44,7 @@ def main():
     ax.yaxis.grid(True, linestyle='dotted')
     ax.set(xlim=(5, 18), xticks=range(5, 18), ylim=(0, 10), yticks=range(0, 10))
 
-    writer = FFMpegWriter(fps=2)
+    writer = FFMpegWriter(fps=3)
     # Create each movie frame
     
     checkin_buckets_numbers = [i for i in range(0, 20)]
@@ -73,7 +74,7 @@ def main():
             writer.grab_frame()
 
         # Spin for a few seconds on that last frame so it stays on screen
-        for _ in range(0, 20):
+        for _ in range(0, 30):
             ax.set_title('Net participation (distinct operators/week):'
                          f' Week {week_number}')
 
