@@ -619,3 +619,25 @@ week_number, callsign, transport_mode, gateway, frequency, location, county, sta
 53, W6RKT, PACKET, K7YFJ-10, 144.940, N/A, Clark, WA
 53, WA6GBW, VARA FM, N1ACW-10, 145.030, N/A, Multnomah, OR
 53, WA6ZLV, PACKET, N1ACW-10, 145.530, Old Town, Clackamas, OR
+54, KI7DGC, Vara FM, W7BVT-10, 145.020, Westlake, Clackamas, OR
+54, N7LIM, VARA FM, W7BVT-10, 145.020, Lake Grove, Clackamas, OR
+54, KJ7JCR, VARA FM, N1ACW-10, 145.530, PALISADES, Clackamas, OR
+54, N1ACW, Packet, W7OWO-10, 145.030, Palisades, Clackamas, OR
+54, KI7LAG, VARA FM, KI7QIB-11, 145.10, Marylhurst, Clackamas, OR
+54, W6RKT, VARA FM, KE7NKR-10, 145.720, N/A, Clark, WA
+54, KK70MS, TELNET, N/A, 0.000, Marylhurst, Clackamas, OR
+55, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town, Clackamas, OR
+55, WA1TRH, Telnet, N/A, 0.000, Uplands, Clackamas, OR
+55, W6RKT, Vara FM, W7YAM-10, 441.050, N/A, Clark, WA
+55, W6RKT, MESH, N/A, 0.000, N/A, Clark, WA
+55, W3STM, VARA FM, KI7QIB-11, 145.010, First Addition, Clackamas, OR
+55, W3STM, VARA FM, K7LSC-10, 144.960, First Addition, Clackamas, OR
+55, KK7OMS, TELNET, N/A, 0.000, Marylhurst, Clackamas, OR
+55, KK7MLS, VARA FM, K7TRP-10, 145.050, Oak Creek, Clackamas, OR
+55, KJ7JCR, PACKET, WC7EOC-10, 144.980, PALISADES, Clackamas, OR
+55, KI7LAG, Vara FM, W7YAM-12, 145.090, N/A, Washington, OR
+55, KI7DGC, Vara FM, K7TRP-10, 145.050, Westlake, Clackamas, OR
+55, KF7KXX, VARA FM, KD7ZDO-12, 441.525, Palisades, Clackamas, OR
+55, KD7PFH, Telnet, N/A, 0.000, Childs, Clackamas, OR
+55, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs, Clackamas, OR
+55, K0AXS, Telnet, N/A, 0.000, Uplands, Clackamas, OR
