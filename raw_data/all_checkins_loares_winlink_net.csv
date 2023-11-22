@@ -629,7 +629,7 @@ week_number, callsign, transport_mode, gateway, frequency, location, county, sta
 55, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town, Clackamas, OR
 55, WA1TRH, Telnet, N/A, 0.000, Uplands, Clackamas, OR
 55, W6RKT, Vara FM, W7YAM-10, 441.050, N/A, Clark, WA
-55, W6RKT, MESH, N/A, 0.000, N/A, Clark, WA
+55, W6RKT, MESH, W7FLO-12, 0.000, N/A, Clark, WA
 55, W3STM, VARA FM, KI7QIB-11, 145.010, First Addition, Clackamas, OR
 55, W3STM, VARA FM, K7LSC-10, 144.960, First Addition, Clackamas, OR
 55, KK7OMS, TELNET, N/A, 0.000, Marylhurst, Clackamas, OR
