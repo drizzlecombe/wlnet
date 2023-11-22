@@ -632,6 +632,7 @@ week_number, callsign, transport_mode, gateway, frequency, location, county, sta
 55, W6RKT, MESH, W7FLO-12, 0.000, N/A, Clark, WA
 55, W3STM, VARA FM, KI7QIB-11, 145.010, First Addition, Clackamas, OR
 55, W3STM, VARA FM, K7LSC-10, 144.960, First Addition, Clackamas, OR
+55, N1ACW/M, Packet, W7ODN-10, 441.525, N/A, Yamhill, OR
 55, KK7OMS, TELNET, N/A, 0.000, Marylhurst, Clackamas, OR
 55, KK7MLS, VARA FM, K7TRP-10, 145.050, Oak Creek, Clackamas, OR
 55, KJ7JCR, PACKET, WC7EOC-10, 144.980, PALISADES, Clackamas, OR
