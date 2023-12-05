@@ -670,3 +670,23 @@ week_number, callsign, transport_mode, gateway, frequency, location, county, sta
 56, W6RKT, VARA FM, K7YFJ-12, 441.525, N/A, Clark, WA
 56, W6RKT, VARA FM, K7LSC-10, 144.960, N/A, Clark, WA
 56, WA6ZLV, TELNET, N/A, 0.000, N/A, Prince William County, VA
+57, WA1TRH, Telnet, N/A, 0.000, Uplands, Clackamas, OR
+57, KI7DGC, Packet, W7YAM-12, 145.090, Westlake, Clackamas, OR
+57, KI7DGC, Packet, KE7NKR-10, 145.720, Westlake, Clackamas, OR
+57, KK7MLS, PACKET, W7YAM-10, 144.970, OAK CREEK, Clackamas, OR
+57, KK7MLS, PACKET, KD7ZDO-10, 145.570, OAK CREEK, Clackamas, OR
+57, W6AGZ, VARA FM, W7BVT-10, 145.020, N/A, CLACKAMAS, OR
+57, W6AGZ, VARA FM, KD7ZDO-11, 145.770, N/A, CLACKAMAS, OR
+57, KF7KXX, PACKET, W7BVT-10, 145.020, Palisades, Clackamas, OR
+57, KF7KXX, PACKET, K7MCE-10, 145.070, Palisades, Clackamas, OR
+57, W6RKT, PACKET, K7YFJ-10, 144.940, N/A, Clark, WA
+57, W6RKT, PACKET, K7YFJ-11, 223.700, N/A, Clark, WA
+57, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town, Clackamas, OR
+57, KJ7JCR, PACKET, WC7EOC-10, 144.980, PALISADES, Clackamas, OR
+57, KJ7JCR, PACKET, N1ACW-10, 145.530, PALISADES, Clackamas, OR
+57, W3STM, PACKET, AE7ZQ-10, 144.950, Forest Hills, Clackamas, OR
+57, W3STM, PACKET, W7YAM-12, 145.090, Forest Hills, Clackamas, OR
+57, KI7LAG, VARA FM, W7BVT-10, 145.020, N/A, Washington, OR
+57, KI7LAG, VARA FM, W7BVT-10, 145.020, N/A, Washington, OR
+57, N1ACW, VARA FM, K7MCE-10, 145.070, Palisades, Clackamas, OR
+57, N1ACW, Packet, W7YAM-12, 145.090, Palisades, Clackamas, OR
