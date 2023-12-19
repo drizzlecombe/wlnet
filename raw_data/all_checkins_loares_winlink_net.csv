@@ -708,3 +708,19 @@ week_number, callsign, transport_mode, gateway, frequency, location, county, sta
 58, W3STM, VARA FM, KD7ZDO-12, 441.525, First Addition, Clackamas, OR
 58, N1ACW, VARA FM, KD7ZDO-11, 145.770, Palisades, Clackamas, OR
 58, N1ACW, Packet,W7YAM-12, 145.090, Palisades, Clackamas, OR
+59, W6AGZ, TELNET, N/A, 0.000, N/A, CLACKAMAS, OR
+59, KD7DNM, Telnet, N/A, 0.000, Childs, Clackamas, OR
+59, KD7PFH, Telnet, N/A, 0.000, Childs, Clackamas, OR
+59, W6RKT, PACKET, K7YFJ-11, 223.700, N/A, Clark, WA
+59, W3STM, VARA FM, K7LSC-10, 144.960, First Addition, Clackamas, OR
+59, KK7MLS, VARA FM, N7TRY-10, 430.550, OAK CREEK, Clackamas, OR
+59, KK7MLS, VARA FM, WC7EOC-10, 144.980, OAK CREEK, Clackamas, OR
+59, KK7MLS, VARA FM, W7YAM-12, 145.090, OAK CREEK, Clackamas, OR
+59, KK7MLS, VARA FM, W7OWO-10, 145.030, OAK CREEK, Clackamas, OR
+59, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town, Clackamas, OR
+59, KJ7JCR, VARA FM, WC7EOC-10, 144.980, PALISADES, Clackamas, OR
+59, KF7KXX, VARA FM, WC7EOC-10, 144.980, Palisades, Clackamas, OR
+59, WA1TRH, Telnet, N/A, 0.000, Uplands, Clackamas, OR
+59, KI7LAG, VARA FM, W7BVT-10, 145.020, N/A, Washington, OR
+59, KI7DGC, Vara FM, N7TRY-10, 430.550, Westlake, Clackamas, OR
+59, N1ACW, VARA, VE7RBH, 14.085, Palisades, Clackamas, OR
