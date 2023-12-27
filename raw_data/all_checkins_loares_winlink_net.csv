@@ -724,3 +724,22 @@ week_number, callsign, transport_mode, gateway, frequency, location, county, sta
 59, KI7LAG, VARA FM, W7BVT-10, 145.020, N/A, Washington, OR
 59, KI7DGC, Vara FM, N7TRY-10, 430.550, Westlake, Clackamas, OR
 59, N1ACW, VARA, VE7RBH, 14.085, Palisades, Clackamas, OR
+60, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs, Clackamas, OR
+60, KD7PFH, Telnet, N/A, 0.000, Childs, Clackamas, OR
+60, KI7DGC, Vara FM, W7BVT-10, 145.020, Westlake, Clackamas, OR
+60, KI7LAG, VARA FM, W7BVT-10, 145.020, Washington, Clackamas, OR
+60, KJ7JCR, VARA FM, WC7EOC-10, 144.980, PALISADES, Clackamas, OR
+60, KK7MLS, PACKET, N1ACW-10, 145.530, OAK CREEK, Clackamas, OR
+60, N1ACW, VARA, W7DEM, 14.096, Palisades, Clackamas, OR
+60, N1ACW, VARA FM, N7OGM-10, 145.050, Palisades, Clackamas, OR
+60, W6AGZ, PACKET, N1ACW-10, 145.530, N/A, Clackamas, OR
+60, W6RKT, MESH, N1ACW-10, 0.000, KF7RSF, Clark, WA
+60, W6RKT, PACKET, K7YFJ-11, 223.700, N/A, Clark, WA
+60, W6RKT, TELNET, N/A, 0.000, N/A, Clark, WA
+60, W6RKT, VARA, N4BTA, 28.130, N/A, Clark, WA
+60, W6RKT, VARA, K4PAR-4, 28.1038, N/A, Clark, WA
+60, W6RKT, Vara FM, K7LSC-10, 144.960, N/A, Clark, WA
+60, W6RKT, Vara FM, W7YAM-10, 441.050, N/A, Clark, WA
+60, W6RKT, Vara FM, K7YFJ-12, 441.525, N/A, Clark, WA
+60, WA1TRH, Telnet, N/A, 0.000, Uplands, Clackamas, OR
+60, WA6ZLV, TELNET, N/A, 0.000, N/A, Island County, WA
