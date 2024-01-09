@@ -1,4 +1,4 @@
-week_number, callsign, transport_mode, gateway, frequency, location, county, state
+ week_number, callsign, transport_mode, gateway, frequency, location, county, state
 1, AD7EF, Telnet, N/A, 0.000, N/A, Clackamas, OR
 1, K0AXS, Telnet, N/A, 0.000, Uplands, Clackamas, OR
 1, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs, Clackamas, OR
@@ -759,3 +759,15 @@ week_number, callsign, transport_mode, gateway, frequency, location, county, sta
 61, KD7PFH, TELNET, N/A, 0.000, CHILDS, CLACKAMAS, OR
 61, N1ACW, VARA, K0SI, 7.102, PALISADES, CLACKAMAS, OR
 61, WA6ZLV, VARA FM, N1ACW-10, 145.530, OLD TOWN, CLACKAMAS, OR
+62, KI7DGC, Vara FM, W7BVT-10, 145.020, Westlake, Clackamas, OR
+62, WA1TRH, Telnet, N/A, 0.000, Uplands, Clackamas, OR
+62, W6RKT, VARA FM, K7LSC-10, 144.960, N/A, Clark, WA
+62, KF7KXX, VARA FM, WC7EOC-10, 144.980, Palisades, Clackamas, OR
+62, KD7PFH, Telnet, N/A, 0.000, Childs, Clackamas, OR
+62, N1ACW, VARA FM, K7MCE-10, 145.070, Palisades, Clackamas, OR
+62, N1ACW, VARA, VE7RBH, 7.063, Palisades, Clackamas, OR
+62, KJ7JCR, VARA FM, N1ACW-10, 145.530, Palisades, Clackamas, OR
+62, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town, Clackamas, OR
+62, W3STM, TELNET, N/A, 0.000, First Addition, Clackamas, OR
+62, W6RKT, VARA, K7UNI, 3.5825, N/A, Clark, WA
+62, KI7LAG, VARA FM, W7BVT-10, 145.020, N/A, Washington, OR
