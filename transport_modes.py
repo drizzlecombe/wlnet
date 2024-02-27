@@ -28,6 +28,8 @@ def mode_best_guess(mode: str, frequency: float) -> str:
             return 'VARA'
         else:
             return 'VARA FM'
+    elif first_mode_chars == 'APRS':
+        return 'APRS'
     elif first_mode_chars == 'PACK':
         return 'PACKET'
     elif first_mode_chars == 'TELN':
