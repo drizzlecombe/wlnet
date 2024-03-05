@@ -42,7 +42,7 @@ def gateway_best_guess(gateway_id: str, frequency: float, mode: str) -> str:
     Returns (gateway_id, frequency)
     """
     # Deal with the simple one first - Telnet mode. 
-    if mode == 'TELNET' or mode == 'APRS' or mode == 'SMTP':
+    if mode == 'TELNET' or mode == 'APRS' or mode == 'SMTP' or mode == 'MESH':
         return ('N/A', 0.0)
     
     # Okay, the mode must use a callsign, possibly with an SSID.
