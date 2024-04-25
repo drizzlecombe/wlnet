@@ -6,7 +6,7 @@ from gateway import gateway_validator
 from location import neighbourhood_check
 from storage import save_checkin
 
-MAX_WEEK_NUMBER = 75 # TODO - load this from a config file
+MAX_WEEK_NUMBER = 100 # TODO - load this from a config file
 MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
 
 
