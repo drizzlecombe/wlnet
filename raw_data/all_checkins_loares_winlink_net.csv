@@ -1105,19 +1105,19 @@
 82, KI7DGC, Vara FM, WA7LO-10, 145.530, Westlake, Clackamas, Oregon
 82, KI7DGC, Vara FM, WA7LO-10, 145.530, Westlake, Clackamas, Oregon
 82, KI7DGC, Vara FM, WA7LO-10, 145.530, Westlake, Clackamas, Oregon
-82, KI7DGC, Packet,  WA7LO-10, 145.530, Westlake, Clackamas, Oregon
-82, KI7DGC, Packet,  WA7LO-10, 145.530, Westlake, clackamas, Oregon
-82, N1ACW,  VARA FM, WA7LO-10, 145.530, Newberg,  Yamhill, Oregon
-82, W6RKT,  VARA FM, WA7LO-10, 145.530, Battle Ground, Clark, Washington
+82, KI7DGC, Packet, WA7LO-10, 145.530, Westlake, Clackamas, Oregon
+82, KI7DGC, Packet, WA7LO-10, 145.530, Westlake, clackamas, Oregon
+82, N1ACW, VARA FM, WA7LO-10, 145.530, Newberg, Yamhill, Oregon
+82, W6RKT, VARA FM, WA7LO-10, 145.530, Battle Ground, Clark, Washington
 82, KJ7JCR, VARA FM, WA7LO-10, 145.530, PALISADES, Clackamas, Oregon
-82, KD7DNM, VARA FM, WA7LO-10, 145.350, Childs,    Clackamas, Oregon
-82, WA6ZLV, VARA FM, WA7LO-10, 145.530, Old Town,  Clackamas, Oregon
+82, KD7DNM, VARA FM, WA7LO-10, 145.350, Childs, Clackamas, Oregon
+82, WA6ZLV, VARA FM, WA7LO-10, 145.530, Old Town, Clackamas, Oregon
 82, KD7PFH, VARA-FM, WA7LO-10, 145.530, Childs Rd, Clackamas, Oregon
 82, KF7KXX, VARA FM, WA7LO-10, 145.530, Palisades, Clackamas, Oregon
 83, WA6ZLV, VARA FM, WA7LO-10, 145.530, Old Town, Clackamas, Oregon
-83, W6RKT,  VARA FM, WA7LO-10, 145.530, Battle Ground, Clark, Washington
-83, N7LIM,  VARA FM, WA7LO-10, 145.530, Lake Grove, Clackamas, Oregon
-83, N1ACW,  VARA FM, WA7LO-10, 145.530, Palisades, Clackamas, Oregon
+83, W6RKT, VARA FM, WA7LO-10, 145.530, Battle Ground, Clark, Washington
+83, N7LIM, VARA FM, WA7LO-10, 145.530, Lake Grove, Clackamas, Oregon
+83, N1ACW, VARA FM, WA7LO-10, 145.530, Palisades, Clackamas, Oregon
 83, KK7MLS, VARA FM, WA7LO-10, 145.530, OAK CREEK, Clackamas, Oregon
 83, KJ7JCR, VARA FM, WA7LO-10, 145.530, PALISADES, Clackamas, Oregon
 83, KI7LAG, VARA FM, WA7LO-10, 145.530, Marys Landing, Clackamas, OR
@@ -1125,3 +1125,13 @@
 83, KF7KXX, VARA FM, WA7LO-10, 145.530, Palisades, Clackamas, Oregon
 83, KD7PFH, VARA FM, WA7LO-10, 145.530, Childs, Clackamas, Oregon
 83, KD7DNM, VARA FM, WA7LO-10, 145.530, Childs, Clackamas, Oregon
+84, KI7DGC, VARA FM, W7TPN-10, 145.710, Westlake, Clackamas, Oregon
+84, WA1TRH, TELNET, N/A, 0.000, Uplands, Clackamas, Oregon
+84, W6RKT, VARA FM, K7LSC-10, 144.960, Battle Ground, Clark, Washington
+84, KD7PFH, VARA FM, N1ACW-10, 145.530, Childs, Clackamas, Oregon
+84, KJ7JCR, VARA FM, WC7EOC-10, 144.980, PALISADES, Clackamas, Oregon
+84, KI7LAG, VARA FM, WC7EOC-10, 144.980, Beaverton, Washington, OR
+84, KF7KXX, VARA FM, N7OGM-10, 145.050, Palisades, Clackamas, Oregon
+84, WA6ZLV, VARA FM, N1ACW-10, 145.530, Old Town, Clackamas, Oregon
+84, KD7DNM, VARA FM, N1ACW-10, 145.530, Childs, Clackamas, Oregon
+84, N1ACW, VARA FM, K7YFJ-12, 441.525, Palisades, Clackamas, Oregon
