@@ -52,6 +52,8 @@ class _CallsignProcessor:
         # Canadian catchall
         callsign_matchers.append(re.compile(r'^V[AEOY][0-9][A-Z]{2,3}$'))
 
+        # Mexican catchall
+        callsign_matchers.append(re.compile(r'^X[EF][1-4][A-Z]{2,3}$'))
         return callsign_matchers
 # -----------------------------------------------------------------------------
 
