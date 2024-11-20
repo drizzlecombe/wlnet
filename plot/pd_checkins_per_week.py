@@ -6,11 +6,14 @@
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 
 import numpy as np
 import pandas as pd
 
 def _get_total_weekly_checkins(df: pd.DataFrame, start_week: int, stop_week: int) -> pd.Series:
+    """Count one checkin for each callsign that checks in. Do this for
+    each week within the range set with start_week and stop_week. """
     #
     # This function does the analogue of the following query but using
     # pandas and loading in a flat CSV file.
@@ -207,7 +210,31 @@ def draw_periodic_checkins_comparison(df: pd.DataFrame, period: int=4):
     ax.legend(ncols=2)
     plt.show()
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+def box(year_1: pd.Series, year_2: pd.Series):
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 6))
+
+    # plot box plot
+    bp = ax.boxplot([year_1.array, year_2.array],
+                    patch_artist=True, medianprops={'color' : 'black'})
+
+    # Now fill the boxes with desired colours
+    box_colours = ['lightsteelblue', 'orange']
+
+    # fill with colors
+    for patch, colour in zip(bp['boxes'], box_colours):
+        patch.set_facecolor(colour)
+
+    ax.set_title('Comparison of first and second\nyear weekly checkin counts')
+
+    # adding horizontal grid lines
+    ax.yaxis.grid(True)
+    ax.set_xticks([1, 2], labels=['Year 1', 'Year 2'])
+    ax.set_ylabel('Distinct check-ins per week')
+
+    plt.show()
+
+# ------------------------------------------------------------------------------
 def load_data_file(file_name: str) -> pd.DataFrame:
     """Load the raw individual check-ins into a Pandas DataFrame
     
@@ -233,17 +260,22 @@ def load_data_file(file_name: str) -> pd.DataFrame:
 def main(data_file_name: str) -> None:
 
     df = load_data_file(data_file_name)
+
     checkin_count_year_one = _get_total_weekly_checkins(df, 0, 52)
     checkin_count_year_two = _get_total_weekly_checkins(df, 53, 104)
 
+    box(checkin_count_year_one, checkin_count_year_two)
 
     draw_periodic_checkins_comparison(df)
     
-    mean_participation = checkin_count_year_one.mean()
-    median_participation = checkin_count_year_one.median()
+    stats_y1 = checkin_count_year_one.describe()
+    stats_y2 = checkin_count_year_two.describe()
 
-    print(f'Mean participation = {mean_participation: 0.2f}')
-    print(f'Median participation = {median_participation: 0.2f}')
+    print(f'Year 1 participation stats')
+    print(f'{stats_y1}')
+    
+    print(f'Year 2 participation stats')
+    print(f'{stats_y2}')
 
 #------------------------------------------------------------------------------
 # Programme entry point

@@ -15,8 +15,8 @@ import datetime
 import config
 
 
-DEFAULT_START_CHECKIN_WEEK = 61 # First week in January 2024
-DEFAULT_END_CHECKIN_WEEK   = 104 # Last week in October 2024
+DEFAULT_START_CHECKIN_WEEK = 61 # First week of period of interest
+DEFAULT_END_CHECKIN_WEEK   = 104 # Last week of second year
 
 DEFAULT_START_CHECKIN_DATE = datetime.date(2024, 1, 2)
 
@@ -59,13 +59,17 @@ def load_csv_file(csv_file_name: str, num_header_lines: int, col_names: list[str
             raw_checkins.append(checkin_line)
     return raw_checkins
 # -----------------------------------------------------------------------------
-def remove_prior_checkins(threshold_week_number, checkins):
-    """Removes checkins from the raw data set prior to the week number
-    specified """
+def remove_out_of_range_checkins(low_threshold_week_number,
+                                 high_threshold_week_number,
+                                   checkins):
+    """Filters checkins keeping only those in the closed range given by
+    the thresholds """
+    assert low_threshold_week_number < high_threshold_week_number, "Thresholds reversed"
     required_checkins = []
     for checkin in checkins:
         week_number = int(checkin['week_number'])
-        if week_number >= threshold_week_number:
+        if week_number >= low_threshold_week_number and \
+            week_number <= high_threshold_week_number:
             required_checkins.append(checkin)
     return required_checkins
 
@@ -141,7 +145,9 @@ def main():
     raw_checkins_col_names = config.get_raw_checkin_fieldnames()
     checkins = load_csv_file(raw_checkins_filename, 1, raw_checkins_col_names)
     print(f'Number of checkins: {len(checkins)}')
-    required_checkins = remove_prior_checkins(DEFAULT_START_CHECKIN_WEEK, checkins)
+    required_checkins = remove_out_of_range_checkins(DEFAULT_START_CHECKIN_WEEK,
+                                                     DEFAULT_END_CHECKIN_WEEK,
+                                                     checkins)
     print(f'Number of checkins after or including week {DEFAULT_START_CHECKIN_WEEK}: {len(required_checkins)}')
     checkins_by_callsign_then_week = group_by_callsign(required_checkins, DEFAULT_END_CHECKIN_WEEK)
     gen_report(checkins_by_callsign_then_week,
