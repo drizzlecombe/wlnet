@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------
 import argparse
 import csv
-from checkins import add_checkin, get_last_checkin_repr
+from checkins import validate_checkins, get_last_checkin_repr
 import config
 from storage import start_database, close_database,\
                     create_checkin_table, StorageException
@@ -36,32 +36,28 @@ def process_command_line():
     return (args.nheaders, args.raw_checkins_filename)
 # -----------------------------------------------------------------------------
 
-def scan_file(csv_file_name: str, num_header_lines: int, col_names: list[str]) -> None:
-    num_cols = len(col_names)
+def scan_file(csv_file_name: str, num_header_lines: int,
+              column_names: list[str]) -> list[dict]:
+    """Reads in the raw checkin contents from a CSV file
+    
+    Returns - all the rows in a dictionary. The keys are the column
+    names from the file.
+    """
+    raw_checkins = []
+    file_line_number = 0
     with open(csv_file_name, "r", newline='') as csvfile:
-        reader = csv.DictReader(csvfile, fieldnames=col_names)
+        reader = csv.DictReader(csvfile, fieldnames=column_names)
+
         header_line_count = 0
-        for checkin_line in reader:
+        for raw_checkin in reader:
+            file_line_number += 1
             if header_line_count < num_header_lines:
                 header_line_count += 1
+                # We've read a header line - skip
                 continue
-
-            if len(checkin_line.keys()) != num_cols:
-                raise ValueError('Check-in has invalid num cols: '
-                                 f'{checkin_line}')
-            clean_checkin_line = dict((k.strip(), v.strip()) \
-                                      for k, v in checkin_line.items())
-            
-            add_checkin(int(clean_checkin_line[col_names[0]]),
-                        clean_checkin_line[col_names[1]],
-                        clean_checkin_line[col_names[2]],
-                        clean_checkin_line[col_names[3]],
-                        float(clean_checkin_line[col_names[4]]),
-                        clean_checkin_line[col_names[5]],
-                        clean_checkin_line[col_names[6]],
-                        clean_checkin_line[col_names[7]])
-            
-            print(f'{get_last_checkin_repr()}')
+            raw_checkin['line_number'] = file_line_number
+            raw_checkins.append(raw_checkin)
+    return raw_checkins
 
 # -----------------------------------------------------------------------------
 def main():
@@ -83,11 +79,18 @@ def main():
     if cl_raw_checkins_filename is not None:
         raw_checkins_filename = cl_raw_checkins_filename
 
-    start_database(database_name)
-    create_checkin_table()
 
-    scan_file(raw_checkins_filename, num_header_lines, raw_checkins_col_names)
-    close_database()
+
+    raw_checkins = scan_file(raw_checkins_filename,
+                             num_header_lines,
+                             raw_checkins_col_names)
+    (valid_checkins, invalid_checkins) = validate_checkins(raw_checkins)
+    if len(invalid_checkins) == 0:
+        # start_database(database_name)
+        # create_checkin_table()
+        # Write checkins here.
+        # close_database()
+        pass
 # -----------------------------------------------------------------------------
 
 if __name__ == '__main__':

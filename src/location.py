@@ -59,7 +59,7 @@ def canonicalise(s: str) -> str:
 
 _neighbourhood_SM = SequenceMatcher()
 
-def neighbourhood_check(s: str) -> tuple[str, float]:
+def location_check(s: str) -> tuple[str, float]:
     """Tests if the input string is likely to be a Lake Oswego neighbourood
     
     :param s: a neighbourhood candidate string
