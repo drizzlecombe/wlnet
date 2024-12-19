@@ -1,3 +1,4 @@
+from validator import Checkin
 import sqlite3 as sql
 
 _db_filename = None
@@ -28,7 +29,7 @@ def create_checkin_table() -> None:
                     transport_mode TEXT, 
                     gateway TEXT, 
                     frequency REAL,
-                    neighbourhood TEXT,
+                    location TEXT,
                     county TEXT,
                     state TEXT)""")
     _db_connection.commit()
@@ -39,20 +40,23 @@ def close_database() -> None:
         _db_connection.close()
 
 #------------------------------------------------------------------------------
-def save_checkin(checkin: dict) -> None:
+def save_checkins(checkins: list[Checkin]) -> None:
     if not _db_started:
         raise StorageException('Cannot save a checkin if the DB is not running')
     cursor = _db_connection.cursor()
-    cursor.execute("""
+
+    values = [chkin.as_dict() for chkin in checkins]
+    print(f'There are {len(values)} to store')
+    cursor.executemany("""
                 INSERT into checkins VALUES
                 (:week_number,
                    :callsign,
                    :transport_mode,
                    :gateway,
                    :frequency,
-                   :neighbourhood,
+                   :location,
                    :county,
-                   :state)""", checkin)
+                   :state)""", values)
     _db_connection.commit()
 #------------------------------------------------------------------------------
 

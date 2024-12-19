@@ -9,10 +9,10 @@
 # -----------------------------------------------------------------------------
 import argparse
 import csv
-from checkins import validate_checkins, get_last_checkin_repr
+from validator import validate_checkins
 import config
 from storage import start_database, close_database,\
-                    create_checkin_table, StorageException
+                    create_checkin_table, save_checkins, StorageException
 
 # ------------------------------------------------------------------------------
 def process_command_line():
@@ -86,11 +86,13 @@ def main():
                              raw_checkins_col_names)
     (valid_checkins, invalid_checkins) = validate_checkins(raw_checkins)
     if len(invalid_checkins) == 0:
-        # start_database(database_name)
-        # create_checkin_table()
-        # Write checkins here.
-        # close_database()
-        pass
+        try:
+            start_database(database_name)
+            create_checkin_table()
+            save_checkins(valid_checkins)
+            close_database()
+        except StorageException as e:
+            print(e)
 # -----------------------------------------------------------------------------
 
 if __name__ == '__main__':

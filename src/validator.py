@@ -4,7 +4,6 @@ from callsign_processing import validate_callsign
 from transport_modes import mode_validator
 from gateway import gateway_validator
 from location import location_check
-from storage import save_checkin
 
 MAX_WEEK_NUMBER = 200 # TODO - load this from a config file
 MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
@@ -15,7 +14,10 @@ MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
 _valid_checkins = []
 _invalid_checkins = []
 
-class _Checkin:
+# -----------------------------------------------------------------------------
+# Holds checkin information and contains the individual field validators
+# -----------------------------------------------------------------------------
+class Checkin:
     def __init__(self, week_number: str,
                  callsign: str,
                  transport_mode: str,
@@ -110,11 +112,11 @@ class _Checkin:
 #------------------------------------------------------------------------------
 # Module interface below
 #------------------------------------------------------------------------------
-def validate_checkins(raw_checkins: list[dict]):
+def validate_checkins(raw_checkins: list[dict]) -> tuple[list[Checkin] , list[Checkin]]:
 
     for raw_checkin in raw_checkins:
         try:
-            check_in = _Checkin(raw_checkin['week_number'],
+            check_in = Checkin(raw_checkin['week_number'],
                             raw_checkin['callsign'],
                             raw_checkin['transport_mode'],
                             raw_checkin['gateway'],
@@ -123,20 +125,9 @@ def validate_checkins(raw_checkins: list[dict]):
                             raw_checkin['county'],
                             raw_checkin['state'])
         except ValueError as e:
-            print(f'Invalid checkin. {e}: {raw_checkin}')
+            print(f'Invalid checkin. {e}:\n{raw_checkin}')
             _invalid_checkins.append(raw_checkin)
 
-    _valid_checkins.append(check_in)
-    checkin_dict = check_in.as_dict()
-    # Move this to a different level
-    # save_checkin(checkin_dict)
-    return (_valid_checkins, _invalid_checkins)
+        _valid_checkins.append(check_in)
 
-#------------------------------------------------------------------------------
-def get_last_checkin_repr() -> str:
-    if len(_valid_checkins) == 0:
-        return "No checkins"
-    else:
-        return str(_valid_checkins[-1])
-#------------------------------------------------------------------------------
-__all__ = ['get_last_checkin_repr']
+    return (_valid_checkins, _invalid_checkins)
