@@ -95,3 +95,14 @@ select cs, mode, count(*)
  group by cs, mode
  order by cs, mode;
 
+-----------------------------------------------------------------------
+-- Dashboard queries
+-----------------------------------------------------------------------
+-- Count how many checkins each AUXC has made since the net moved over
+-- to CARES.
+select callsign, count(*) 
+  from (select distinct callsign, week_number
+          from checkins
+         where week_number between 105 and 122)
+ group by callsign
+ order by count(*) desc, callsign asc;
