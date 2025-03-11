@@ -103,6 +103,14 @@ select cs, mode, count(*)
 select callsign, count(*) 
   from (select distinct callsign, week_number
           from checkins
-         where week_number between 105 and 122)
+         where week_number >= 105)
  group by callsign
  order by count(*) desc, callsign asc;
+
+ -- Count number of distinct checkins per week since the net moved.
+select week_number, count(*)
+  from  (select distinct callsign, week_number -- only one checkin per week per callsign counted.
+          from checkins
+         where week_number >= 105)
+ group by week_number
+ order by week_number asc;
