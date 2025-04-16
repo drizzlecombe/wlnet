@@ -114,3 +114,11 @@ select week_number, count(*)
          where week_number >= 105)
  group by week_number
  order by week_number asc;
+
+ -- Count the total number of mode types used since the start of the CARES portion of the net
+ select transport_mode, count(*)
+   from checkins
+  where week_number >= 105
+  group by transport_mode
+  order by count(*) desc;
+
