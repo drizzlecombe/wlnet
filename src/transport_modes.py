@@ -6,8 +6,8 @@
 
 # -----------------------------------------------------------------------------
 # Canonical transport mode names 
-_expected_modes = {'ARDOP', 'MESH', 'PACKET', 'PACTOR', 'SMTP',
-                'TELNET', 'VARA', 'VARA FM'}
+_expected_modes = {'ARDOP', 'APRS', 'MESH', 'PACKET', 'PACTOR', 'SMTP',
+                'TELNET', 'VARA', 'VARA FM' ,'WEBMAIL'}
 
 def mode_validator(raw_mode: str, frequency: float) -> str:
     if not isinstance(raw_mode, str):
@@ -38,6 +38,8 @@ def mode_best_guess(mode: str, frequency: float) -> str:
         return 'PACTOR'
     elif first_mode_chars == 'MESH':
         return 'MESH'
+    elif first_mode_chars == 'WEBM':
+        return 'Webmail'
     elif first_mode_chars == 'SMTP':
         return 'SMTP'
     # We have not (yet) seen these modes:

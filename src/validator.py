@@ -38,6 +38,8 @@ class Checkin:
 
         self.location = self.check_location(location)
         self.county = county
+        if not isinstance(state, str):
+            raise ValueError(f'State is not a string: {state}')
         if len(state) == 2:
             self.state = state.upper()
         else:
