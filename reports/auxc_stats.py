@@ -75,6 +75,14 @@ def remove_out_of_range_checkins(lowest_week_number, checkins):
     return in_range_checkins
 
 # -----------------------------------------------------------------------------
+class Auxc:
+    def __init__(self, callsign):
+        self.callsign = callsign
+        self.distinct_checkin_cnt = 0
+        self.checkin_rf_cnt = 0
+        self.checkin_not_rf_cnt = 0
+        
+# -----------------------------------------------------------------------------
 
 def checkins_by_callsign(checkins: Checkin):
     """Runs through all the checkins and arranges them by the operator's
