@@ -43,7 +43,8 @@ def process_command_line():
     return (args.nheaders, args.raw_checkins_filename)
 # -----------------------------------------------------------------------------
 
-def load_csv_file(csv_file_name: str, num_header_lines: int, col_names: list[str]) -> None:
+def load_csv_file(csv_file_name: str, num_header_lines: int,
+                  col_names: list[str], threshold_week: int = 1) -> None:
     num_cols = len(col_names)
     raw_checkins = []
     with open(csv_file_name, "r", newline='') as csvfile:
@@ -57,22 +58,11 @@ def load_csv_file(csv_file_name: str, num_header_lines: int, col_names: list[str
             if len(checkin_line.keys()) != num_cols:
                 raise ValueError('Check-in has invalid num cols: '
                                  f'{checkin_line}')
-            raw_checkins.append(checkin_line)
+            
+            # Ignore checkins for week numbers before our threshold
+            if int(checkin_line['week_number']) >= threshold_week:
+                raw_checkins.append(checkin_line)
     return raw_checkins
-
-# -----------------------------------------------------------------------------
-def remove_out_of_range_checkins(lowest_week_number, checkins):
-    """Filters checkins keeping only those after but including a specific week number
-     
-    Returns a list of Checkin types  
-     """
- 
-    in_range_checkins = []
-    for checkin in checkins:
-        week_number = int(checkin.week_number)
-        if week_number >= lowest_week_number:
-            in_range_checkins.append(checkin)
-    return in_range_checkins
 
 # -----------------------------------------------------------------------------
 class Auxc:
@@ -81,7 +71,18 @@ class Auxc:
         self.distinct_checkin_cnt = 0
         self.checkin_rf_cnt = 0
         self.checkin_not_rf_cnt = 0
-        
+
+    def add_checkin(self, checkin):
+        if not isinstance(checkin, Checkin):
+            raise TypeError(f"Not an instance of Checkin: {checkin}")
+        if checkin.transport_mode in ['TELNET', 'WEBMAIL', 'SMTP']:
+            self.checkin_not_rf_cnt += 1
+        else:
+            self.checkin_rf_cnt += 1
+
+    def __repr__(self):
+        return f'{self.callsign}, {self.checkin_rf_cnt}, {self.checkin_not_rf_cnt}, {self.checkin_rf_cnt + self.checkin_not_rf_cnt}'
+
 # -----------------------------------------------------------------------------
 
 def checkins_by_callsign(checkins: Checkin):
@@ -92,13 +93,13 @@ def checkins_by_callsign(checkins: Checkin):
     callsign is a list of checkins
     
     """
-    checkins_by_callsign = {}
+    auxcs = {}
     for checkin in checkins:
         # Every AUXC is given a list to hold their checkins. Add any checkin for
         # that AUXC to their list.
-        auxcs_checkins = checkins_by_callsign.setdefault(checkin.callsign, [])
-        auxcs_checkins.append(checkin)
-    return checkins_by_callsign
+        auxc = auxcs.setdefault(checkin.callsign, Auxc(checkin.callsign))
+        auxc.add_checkin(checkin)
+    return auxcs
 
 # -----------------------------------------------------------------------------
 
@@ -130,17 +131,14 @@ def main():
     config.load_config_file('config.json')
     raw_checkins_filename = config.get_raw_checkin_filename()
     raw_checkins_col_names = config.get_raw_checkin_fieldnames()
-    checkins = load_csv_file(raw_checkins_filename, 1, raw_checkins_col_names)
+    checkins = load_csv_file(raw_checkins_filename, 1, raw_checkins_col_names, NET_START_WEEK)
 
     (valid_checkins, invalid_checkins) = validate_checkins(checkins)
-    print(f'Total number of valid checkins for all weeks: {len(valid_checkins)}')
+    print(f'Number of checkins after or including week {NET_START_WEEK}: {len(valid_checkins)}')
 
-    required_checkins = remove_out_of_range_checkins(NET_START_WEEK, valid_checkins)
-    print(f'Number of checkins after or including week {NET_START_WEEK}: {len(required_checkins)}')
-
-    by_auxc = checkins_by_callsign(required_checkins)
-    for auxc in by_auxc.keys():
-        print(f'{auxc}, {len(by_auxc[auxc])}')
+    auxcs = checkins_by_callsign(valid_checkins)
+    for auxc in auxcs:
+        print(auxc)
 
     """gen_report(checkins_by_callsign_then_week,
                DEFAULT_START_CHECKIN_DATE,
