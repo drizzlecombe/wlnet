@@ -12,15 +12,11 @@
 
 import argparse
 import csv
-from typing import Set
 
 # NOTE: the following modules has to be in the PYTHONPATH For example, running
 # from the root of this project: $ export PYTHONPATH=./src
 import config
 from validator import validate_checkins, Checkin
-
-
-NET_START_WEEK = 105
 
 # ------------------------------------------------------------------------------
 def process_command_line():
@@ -143,27 +139,6 @@ def checkins_by_callsign(checkins: [Checkin]):
     return auxcs
 
 # -----------------------------------------------------------------------------
-
-def gen_report(checkins_by_callsign_then_week, start_date, start_week, end_week):
-
-    w2dLUT = gen_week_number_to_checkin_date(start_date, start_week, end_week)
-    # print header
-    header = 'Callsign, '
-    for week in range(start_week, end_week + 1):
-        header += f'"{w2dLUT[week]}", '
-    print(header)
-
-    # Now print out a checkin status for each callsign for each week.
-    callsigns = checkins_by_callsign_then_week.keys()
-    for callsign in sorted(callsigns):
-        line = f'{callsign}, '
-        for num in checkins_by_callsign_then_week[callsign][start_week:]:
-            checked_in_this_week = 'FALSE, '
-            if num > 0:
-                checked_in_this_week = 'TRUE, '
-            line += checked_in_this_week
-        print(line)
-# -----------------------------------------------------------------------------
 def main():
     # Set up command line parsing.
     # Not implemented - use this one day to generate more date-flexible reports
@@ -173,23 +148,21 @@ def main():
     raw_checkins_filename = config.get_raw_checkin_filename()
     raw_checkins_col_names = config.get_raw_checkin_fieldnames()
     Auxc.aec_set = config.get_aecs()
+    CARES_net_start_week_num = config.get_start_week_num()
 
-    checkins = load_csv_file(raw_checkins_filename, 1, raw_checkins_col_names, NET_START_WEEK)
+    checkins = load_csv_file(raw_checkins_filename, 1,
+                             raw_checkins_col_names,
+                             CARES_net_start_week_num)
 
     (valid_checkins, invalid_checkins) = validate_checkins(checkins)
-    print(f'Number of checkins after or including week {NET_START_WEEK}: {len(valid_checkins)}')
+    print(f'Number of checkins after or including week '
+          f'{CARES_net_start_week_num}: {len(valid_checkins)}')
 
     auxcs = checkins_by_callsign(valid_checkins)
     for auxc in sorted(auxcs.values(), reverse=True):
         print(auxc)
 
-    """gen_report(checkins_by_callsign_then_week,
-               DEFAULT_START_CHECKIN_DATE,
-               DEFAULT_START_CHECKIN_WEEK,
-               DEFAULT_END_CHECKIN_WEEK) """
-
 # -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
     main()
-
