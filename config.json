@@ -10,7 +10,10 @@
                                 "state"],
     "num_header_lines": 1,
     "database_name": "./db/checkins_week_test.db",
+
     "AECs": ["AD7EF", "K7QQB", "KC7TAK", "KE7GXC", 
              "KF7KXX", "KI7BDP", "KI7FCG", "N1ACW", 
-             "N7KPL", "W7CRI", "W7MDB"]
+             "N7KPL", "W7CRI", "W7MDB"],
+    
+    "CARES_net_start_week_num": 105 
 }

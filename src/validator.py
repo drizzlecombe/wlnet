@@ -18,6 +18,11 @@ _invalid_checkins = []
 # Holds checkin information and contains the individual field validators
 # -----------------------------------------------------------------------------
 class Checkin:
+    # The highest week number seen is considered to be the previous week's net
+    # identifier.
+
+    max_week_number = 0
+
     def __init__(self, week_number: str,
                  callsign: str,
                  transport_mode: str,
@@ -32,6 +37,10 @@ class Checkin:
         # will most likely detect the issue.
         self.frequency = self.check_frequency(frequency)
         self.week_number = self.check_week_number(week_number)
+
+        if self.week_number > Checkin.max_week_number:
+            Checkin.max_week_number = self.week_number
+
         self.callsign = self.check_callsign(callsign)
         self.transport_mode = self.check_mode(transport_mode, self.frequency)
         self.gateway = gateway_validator(gateway)

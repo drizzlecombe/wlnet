@@ -41,6 +41,14 @@ def get_num_header_lines() -> int | None:
 def get_aecs() -> set[str] | None:
     return set(_current_config['AECs'])
 
+# ------------------------------------------------------------------------------
+def get_start_week_num() -> int | None:
+    """The CARES Winlink net is a continuaton of the LOARES Winlink net which
+    started two years prior. The CARES net started on this LOARES net week
+    number.
+    """
+    return _current_config['CARES_net_start_week_num']
+
 #------------------------------------------------------------------------------
 # Test code below here
 #------------------------------------------------------------------------------

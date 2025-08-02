@@ -122,7 +122,7 @@ class Auxc:
         return self.__repr__()
 # -----------------------------------------------------------------------------
 
-def checkins_by_callsign(checkins: [Checkin]):
+def checkins_by_callsign(checkins: list[Checkin]):
     """Runs through all the checkins and arranges them by the operator's
     callsign
     
@@ -158,6 +158,9 @@ def main():
     print(f'Number of checkins after or including week '
           f'{CARES_net_start_week_num}: {len(valid_checkins)}')
 
+    print('The net has been running '
+          f'{Checkin.max_week_number - CARES_net_start_week_num + 1} '
+          'weeks')
     auxcs = checkins_by_callsign(valid_checkins)
     for auxc in sorted(auxcs.values(), reverse=True):
         print(auxc)
