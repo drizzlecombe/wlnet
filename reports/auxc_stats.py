@@ -71,21 +71,51 @@ class Auxc:
         self.distinct_checkin_cnt = 0
         self.checkin_rf_cnt = 0
         self.checkin_not_rf_cnt = 0
+        self.distinct_checkin_weeks = set()
 
     def add_checkin(self, checkin):
         if not isinstance(checkin, Checkin):
             raise TypeError(f"Not an instance of Checkin: {checkin}")
+
+        # TODO: Put the non-RF mode values in the configuration file.
         if checkin.transport_mode in ['TELNET', 'WEBMAIL', 'SMTP']:
             self.checkin_not_rf_cnt += 1
         else:
             self.checkin_rf_cnt += 1
 
-    def __repr__(self):
-        return f'{self.callsign}, {self.checkin_rf_cnt}, {self.checkin_not_rf_cnt}, {self.checkin_rf_cnt + self.checkin_not_rf_cnt}'
+        # Only one check-in is considered per week. If multiple check-ins happen
+        # during a week, they are just treated as one.
+        self.distinct_checkin_weeks.add(checkin.week_number)
 
+    def num_distinct_checkins(self):
+        return len(self.distinct_checkin_weeks)
+    
+    def __lt__(self, other):
+        """AUXCs are sortable. They are ranked by the number of distinct
+        checkins. More distinct checkins means an earier position in the overall
+        list of AUXCs. If two or more AUXCs have the same number of distinct
+        checkins, then they are sorted by callsign lexicographically."""
+
+        if not isinstance(other, Auxc):
+            raise TypeError(f'{self.callsign}: '\
+                            'The other value is not an instance of Auxc')
+        
+        if self.num_distinct_checkins() == other.num_distinct_checkins():
+            # Same number of distinct checkins, so order lexicographically.
+            return self.callsign > other.callsign
+        return self.num_distinct_checkins() < other.num_distinct_checkins()
+     
+    def __repr__(self):
+        # {self.checkin_rf_cnt}, '\
+        # f'{self.checkin_not_rf_cnt}, '\
+        # f'{self.checkin_rf_cnt + self.checkin_not_rf_cnt}, '\
+        return f'{self.callsign}, {self.num_distinct_checkins()}'
+
+    def __str__(self):
+        return self.__repr__()
 # -----------------------------------------------------------------------------
 
-def checkins_by_callsign(checkins: Checkin):
+def checkins_by_callsign(checkins: [Checkin]):
     """Runs through all the checkins and arranges them by the operator's
     callsign
     
@@ -137,7 +167,7 @@ def main():
     print(f'Number of checkins after or including week {NET_START_WEEK}: {len(valid_checkins)}')
 
     auxcs = checkins_by_callsign(valid_checkins)
-    for auxc in auxcs:
+    for auxc in sorted(auxcs.values(), reverse=True):
         print(auxc)
 
     """gen_report(checkins_by_callsign_then_week,
