@@ -12,6 +12,7 @@
 
 import argparse
 import csv
+from typing import Set
 
 # NOTE: the following modules has to be in the PYTHONPATH For example, running
 # from the root of this project: $ export PYTHONPATH=./src
@@ -66,8 +67,14 @@ def load_csv_file(csv_file_name: str, num_header_lines: int,
 
 # -----------------------------------------------------------------------------
 class Auxc:
+    # This is the set of Assistant Emergency Coordinators' callsigns
+    aec_set = None
+
     def __init__(self, callsign):
         self.callsign = callsign
+        self.is_AEC = False
+        if Auxc.aec_set is not None:
+            self.is_AEC = self.callsign in Auxc.aec_set
         self.distinct_checkin_cnt = 0
         self.checkin_rf_cnt = 0
         self.checkin_not_rf_cnt = 0
@@ -109,7 +116,11 @@ class Auxc:
         # {self.checkin_rf_cnt}, '\
         # f'{self.checkin_not_rf_cnt}, '\
         # f'{self.checkin_rf_cnt + self.checkin_not_rf_cnt}, '\
-        return f'{self.callsign}, {self.num_distinct_checkins()}'
+
+        aec_indicator = ''
+        if self.is_AEC:
+            aec_indicator = 'Y'
+        return f'{self.callsign}, {aec_indicator}, {self.num_distinct_checkins()}'
 
     def __str__(self):
         return self.__repr__()
@@ -161,6 +172,8 @@ def main():
     config.load_config_file('config.json')
     raw_checkins_filename = config.get_raw_checkin_filename()
     raw_checkins_col_names = config.get_raw_checkin_fieldnames()
+    Auxc.aec_set = config.get_aecs()
+
     checkins = load_csv_file(raw_checkins_filename, 1, raw_checkins_col_names, NET_START_WEEK)
 
     (valid_checkins, invalid_checkins) = validate_checkins(checkins)

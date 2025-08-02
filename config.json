@@ -1,4 +1,4 @@
-{
+{ 
     "raw_checkin_filename": "./raw_data/all_checkins_loares_winlink_net.csv",
     "raw_checkin_field_names": ["week_number", 
                                 "callsign",
@@ -9,5 +9,8 @@
                                 "county",
                                 "state"],
     "num_header_lines": 1,
-    "database_name": "./db/checkins_week_test.db"
+    "database_name": "./db/checkins_week_test.db",
+    "AECs": ["AD7EF", "K7QQB", "KC7TAK", "KE7GXC", 
+             "KF7KXX", "KI7BDP", "KI7FCG", "N1ACW", 
+             "N7KPL", "W7CRI", "W7MDB"]
 }
