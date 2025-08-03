@@ -20,6 +20,13 @@ import config
 from checkin import validate_checkins, Checkin
 
 # ------------------------------------------------------------------------------
+# Constants
+# ------------------------------------------------------------------------------
+NO_CHECKIN = 0
+RF_CHECKIN = 1
+NON_RF_CHECKIN = 2
+
+# ------------------------------------------------------------------------------
 def process_command_line():
     parser = argparse.ArgumentParser(description='Run an AUXC report.')
     parser.add_argument('-n',
@@ -80,9 +87,12 @@ class Auxc:
         if Auxc.aec_set is not None:
             self.is_AEC = self.callsign in Auxc.aec_set
         self.distinct_checkin_cnt = 0
-        self.checkin_rf_cnt = 0
-        self.checkin_not_rf_cnt = 0
-        self.distinct_checkin_weeks = set()
+
+        # Only one check-in per week is counted. This is called a distinct
+        # check-in. However, we keep the transport mode of each check-in to see
+        # if any week has exclusively a non-RF distinct check-in. This
+        # dictionary is keyed by distinct check-in week.
+        self.distinct_checkin_type = {}
         self.participation = 0.0
 
     # -------------------------------------------------------------------------
@@ -90,19 +100,38 @@ class Auxc:
         if not isinstance(checkin, Checkin):
             raise TypeError(f"Not an instance of Checkin: {checkin}")
 
+        # Keep track of whether or not an RF checkin was used during a given
+        # week for this AUXC
+        week_checkin_type = self.distinct_checkin_type.setdefault(
+            checkin.week_number,
+            NO_CHECKIN)
+        
         # TODO: Put the non-RF mode values in the configuration file.
         if checkin.transport_mode in ['TELNET', 'WEBMAIL', 'SMTP']:
-            self.checkin_not_rf_cnt += 1
+            # Don't update the distinct checkin type for this week if it is
+            # already an RF_CHECKIN type. Only upgrade a NO_CHECKIN.
+            if self.distinct_checkin_type[checkin.week_number] == NO_CHECKIN:
+                self.distinct_checkin_type[checkin.week_number] = NON_RF_CHECKIN
         else:
-            self.checkin_rf_cnt += 1
+            # Since we have an RF_CHECKIN - these trump all other types. No need
+            # to check what we have already set - just force this type.
+            self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
 
-        # Only one check-in is considered per week. If multiple check-ins happen
-        # during a week, they are just treated as one.
-        self.distinct_checkin_weeks.add(checkin.week_number)
     # -------------------------------------------------------------------------
     def num_distinct_checkins(self):
-        return len(self.distinct_checkin_weeks)
+        # Note that only one check-in is considered per week. If multiple
+        # check-ins happen during a week, they are just treated as one. The
+        # number of keys in the distinct_checkin_type dictionary is an exact
+        # count of distinct checkins since it tracts the weeks checked-in.
+        return len(self.distinct_checkin_type.keys())
     
+    # -------------------------------------------------------------------------
+    def distinct_rf_checkin_proportion(self) -> int:
+        """Returns the proportion of distinct checkins that were made using RF
+        compared to the total number of distinct checkins"""
+        rf_cnt = list(self.distinct_checkin_type.values()).count(RF_CHECKIN)
+        return int(100.0 * rf_cnt / self.num_distinct_checkins())
+
     # -------------------------------------------------------------------------
     def net_participation(self) -> int:
         return round(self.num_distinct_checkins() * 
@@ -110,7 +139,7 @@ class Auxc:
     
     # -------------------------------------------------------------------------
     def weeks_since_last_checkin(self) -> int:
-        return Auxc.current_week_number - max(self.distinct_checkin_weeks)
+        return Auxc.current_week_number - max(self.distinct_checkin_type.keys())
     
     # -------------------------------------------------------------------------
     def __lt__(self, other):
@@ -130,16 +159,13 @@ class Auxc:
      
     # -------------------------------------------------------------------------
     def __repr__(self):
-        # {self.checkin_rf_cnt}, '\
-        # f'{self.checkin_not_rf_cnt}, '\
-        # f'{self.checkin_rf_cnt + self.checkin_not_rf_cnt}, '\
-
         aec_indicator = ''
         if self.is_AEC:
             aec_indicator = 'Y'
         return f'{self.callsign}, {aec_indicator}, ' \
                f'{self.num_distinct_checkins()}, '   \
                f'{self.net_participation()}, '       \
+               f'{self.distinct_rf_checkin_proportion()}, '   \
                f'{self.weeks_since_last_checkin()}'
 
     # -------------------------------------------------------------------------
