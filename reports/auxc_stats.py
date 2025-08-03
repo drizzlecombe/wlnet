@@ -16,7 +16,7 @@ import csv
 # NOTE: the following modules has to be in the PYTHONPATH For example, running
 # from the root of this project: $ export PYTHONPATH=./src
 import config
-from validator import validate_checkins, Checkin
+from checkin import validate_checkins, Checkin
 
 # ------------------------------------------------------------------------------
 def process_command_line():

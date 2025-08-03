@@ -1,4 +1,4 @@
-from validator import Checkin
+from checkin import Checkin
 import sqlite3 as sql
 
 _db_filename = None

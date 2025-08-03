@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------
 import argparse
 import csv
-from validator import validate_checkins
+from checkin import validate_checkins
 import config
 from storage import start_database, close_database,\
                     create_checkin_table, save_checkins, StorageException
