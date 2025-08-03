@@ -94,6 +94,7 @@ class Auxc:
         # dictionary is keyed by distinct check-in week.
         self.distinct_checkin_type = {}
         self.participation = 0.0
+        self.distinct_gateways = set()
 
     # -------------------------------------------------------------------------
     def add_checkin(self, checkin):
@@ -116,6 +117,9 @@ class Auxc:
             # Since we have an RF_CHECKIN - these trump all other types. No need
             # to check what we have already set - just force this type.
             self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
+
+        if checkin.gateway != 'N/A':
+            self.distinct_gateways.add(checkin.gateway)
 
     # -------------------------------------------------------------------------
     def num_distinct_checkins(self):
@@ -166,6 +170,7 @@ class Auxc:
                f'{self.num_distinct_checkins()}, '   \
                f'{self.net_participation()}, '       \
                f'{self.distinct_rf_checkin_proportion()}, '   \
+               f'{len(self.distinct_gateways)}, '    \
                f'{self.weeks_since_last_checkin()}'
 
     # -------------------------------------------------------------------------
