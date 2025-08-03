@@ -67,6 +67,9 @@ class Auxc:
     # This is the set of Assistant Emergency Coordinators' callsigns
     aec_set = None
 
+    # The current week number for the net
+    current_week_number = 0
+
     # The CARES net has been running this many weeks
     net_running_weeks = None
 
@@ -106,6 +109,10 @@ class Auxc:
                      100.0 / Auxc.net_running_weeks)
     
     # -------------------------------------------------------------------------
+    def weeks_since_last_checkin(self) -> int:
+        return Auxc.current_week_number - max(self.distinct_checkin_weeks)
+    
+    # -------------------------------------------------------------------------
     def __lt__(self, other):
         """AUXCs are sortable. They are ranked by the number of distinct
         checkins. More distinct checkins means an earier position in the overall
@@ -132,7 +139,8 @@ class Auxc:
             aec_indicator = 'Y'
         return f'{self.callsign}, {aec_indicator}, ' \
                f'{self.num_distinct_checkins()}, '   \
-               f'{self.net_participation()}%'
+               f'{self.net_participation()}, '       \
+               f'{self.weeks_since_last_checkin()}'
 
     # -------------------------------------------------------------------------
     def __str__(self):
@@ -164,7 +172,6 @@ def main():
     config.load_config_file('config.json')
     raw_checkins_filename = config.get_raw_checkin_filename()
     raw_checkins_col_names = config.get_raw_checkin_fieldnames()
-    Auxc.aec_set = config.get_aecs()
     CARES_net_start_week_num = config.get_start_week_num()
 
     checkins = load_csv_file(raw_checkins_filename, 1,
@@ -181,7 +188,10 @@ def main():
     net_operational_weeks = Checkin.max_week_number - CARES_net_start_week_num + 1
     print(f'The net has been running {net_operational_weeks} weeks')
 
+    # Set up the Auxc class before we start using instances of it.
     Auxc.net_running_weeks = net_operational_weeks
+    Auxc.current_week_number = Checkin.max_week_number
+    Auxc.aec_set = config.get_aecs()
 
     auxcs = checkins_by_callsign(valid_checkins)
     for auxc in sorted(auxcs.values(), reverse=True):
