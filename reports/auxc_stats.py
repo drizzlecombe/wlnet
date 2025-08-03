@@ -12,6 +12,7 @@
 
 import argparse
 import csv
+from typing import Dict
 
 # NOTE: the following modules has to be in the PYTHONPATH For example, running
 # from the root of this project: $ export PYTHONPATH=./src
@@ -66,6 +67,10 @@ class Auxc:
     # This is the set of Assistant Emergency Coordinators' callsigns
     aec_set = None
 
+    # The CARES net has been running this many weeks
+    net_running_weeks = None
+
+    # -------------------------------------------------------------------------
     def __init__(self, callsign):
         self.callsign = callsign
         self.is_AEC = False
@@ -75,7 +80,9 @@ class Auxc:
         self.checkin_rf_cnt = 0
         self.checkin_not_rf_cnt = 0
         self.distinct_checkin_weeks = set()
+        self.participation = 0.0
 
+    # -------------------------------------------------------------------------
     def add_checkin(self, checkin):
         if not isinstance(checkin, Checkin):
             raise TypeError(f"Not an instance of Checkin: {checkin}")
@@ -89,10 +96,16 @@ class Auxc:
         # Only one check-in is considered per week. If multiple check-ins happen
         # during a week, they are just treated as one.
         self.distinct_checkin_weeks.add(checkin.week_number)
-
+    # -------------------------------------------------------------------------
     def num_distinct_checkins(self):
         return len(self.distinct_checkin_weeks)
     
+    # -------------------------------------------------------------------------
+    def net_participation(self) -> int:
+        return round(self.num_distinct_checkins() * 
+                     100.0 / Auxc.net_running_weeks)
+    
+    # -------------------------------------------------------------------------
     def __lt__(self, other):
         """AUXCs are sortable. They are ranked by the number of distinct
         checkins. More distinct checkins means an earier position in the overall
@@ -108,6 +121,7 @@ class Auxc:
             return self.callsign > other.callsign
         return self.num_distinct_checkins() < other.num_distinct_checkins()
      
+    # -------------------------------------------------------------------------
     def __repr__(self):
         # {self.checkin_rf_cnt}, '\
         # f'{self.checkin_not_rf_cnt}, '\
@@ -116,13 +130,16 @@ class Auxc:
         aec_indicator = ''
         if self.is_AEC:
             aec_indicator = 'Y'
-        return f'{self.callsign}, {aec_indicator}, {self.num_distinct_checkins()}'
+        return f'{self.callsign}, {aec_indicator}, ' \
+               f'{self.num_distinct_checkins()}, '   \
+               f'{self.net_participation()}%'
 
+    # -------------------------------------------------------------------------
     def __str__(self):
         return self.__repr__()
 # -----------------------------------------------------------------------------
 
-def checkins_by_callsign(checkins: list[Checkin]):
+def checkins_by_callsign(checkins: list[Checkin]) -> Dict[str, Auxc]:
     """Runs through all the checkins and arranges them by the operator's
     callsign
     
@@ -158,9 +175,14 @@ def main():
     print(f'Number of checkins after or including week '
           f'{CARES_net_start_week_num}: {len(valid_checkins)}')
 
-    print('The net has been running '
-          f'{Checkin.max_week_number - CARES_net_start_week_num + 1} '
-          'weeks')
+    # The CARES net has been running for this number of weeks. It started out as
+    # the LOARES net, but was brought to the county as a whole two years after
+    # its inception.
+    net_operational_weeks = Checkin.max_week_number - CARES_net_start_week_num + 1
+    print(f'The net has been running {net_operational_weeks} weeks')
+
+    Auxc.net_running_weeks = net_operational_weeks
+
     auxcs = checkins_by_callsign(valid_checkins)
     for auxc in sorted(auxcs.values(), reverse=True):
         print(auxc)
