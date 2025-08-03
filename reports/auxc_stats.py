@@ -166,12 +166,13 @@ class Auxc:
         aec_indicator = ''
         if self.is_AEC:
             aec_indicator = 'Y'
-        return f'{self.callsign}, {aec_indicator}, ' \
+        return f'{self.callsign}, ' \
                f'{self.num_distinct_checkins()}, '   \
                f'{self.net_participation()}, '       \
+               f'{self.weeks_since_last_checkin()},'  \
                f'{self.distinct_rf_checkin_proportion()}, '   \
-               f'{len(self.distinct_gateways)}, '    \
-               f'{self.weeks_since_last_checkin()}'
+               f'{len(self.distinct_gateways)}'
+
 
     # -------------------------------------------------------------------------
     def __str__(self):
