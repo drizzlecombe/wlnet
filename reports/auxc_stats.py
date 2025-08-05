@@ -163,9 +163,15 @@ class Auxc:
      
     # -------------------------------------------------------------------------
     def __repr__(self):
-        aec_indicator = ''
-        if self.is_AEC:
-            aec_indicator = 'Y'
+        """This is the report. """
+        # Even though this reporting system pulls out who is an AEC and adds it
+        # to the appropriate Auxc instances - this is not currently used in the
+        # report (it's done another way for convenience.)
+        # aec_indicator = ''
+        # if self.is_AEC:
+        #     aec_indicator = 'Y'
+
+        # The column arrangement must not be changed for this report.
         return f'{self.callsign}, ' \
                f'{self.num_distinct_checkins()}, '   \
                f'{self.net_participation()}, '       \
