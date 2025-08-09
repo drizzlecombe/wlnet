@@ -94,6 +94,9 @@ class Auxc:
         # dictionary is keyed by distinct check-in week.
         self.distinct_checkin_type = {}
         self.participation = 0.0
+
+        # This is the first recorded week that the AUXC checked in.
+        self.first_checkin_week = Auxc.current_week_number
         self.distinct_gateways = set()
 
     # -------------------------------------------------------------------------
@@ -121,6 +124,12 @@ class Auxc:
         if checkin.gateway != 'N/A':
             self.distinct_gateways.add(checkin.gateway)
 
+        # Participation is monitored from the first week that the AUXC checked
+        # into the net.
+        # TODO: account for hiatus.
+        if checkin.week_number < self.first_checkin_week:
+            self.first_checkin_week = checkin.week_number
+
     # -------------------------------------------------------------------------
     def num_distinct_checkins(self):
         # Note that only one check-in is considered per week. If multiple
@@ -138,8 +147,10 @@ class Auxc:
 
     # -------------------------------------------------------------------------
     def net_participation(self) -> int:
-        return round(self.num_distinct_checkins() * 
-                     100.0 / Auxc.net_running_weeks)
+        """Reports an AUXCs net participation over the period between the
+        current week and the first recorded week that they joined the net."""
+        return round(100 * self.num_distinct_checkins() /
+                     (1 + (Auxc.current_week_number - self.first_checkin_week)))
     
     # -------------------------------------------------------------------------
     def weeks_since_last_checkin(self) -> int:
@@ -175,7 +186,7 @@ class Auxc:
         return f'{self.callsign}, ' \
                f'{self.num_distinct_checkins()}, '   \
                f'{self.net_participation()}, '       \
-               f'{self.weeks_since_last_checkin()},'  \
+               f'{self.weeks_since_last_checkin()}, '\
                f'{self.distinct_rf_checkin_proportion()}, '   \
                f'{len(self.distinct_gateways)}'
 
