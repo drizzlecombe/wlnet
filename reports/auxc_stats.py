@@ -159,17 +159,21 @@ class Auxc:
     # -------------------------------------------------------------------------
     def __lt__(self, other):
         """AUXCs are sortable. They are ranked by the number of distinct
-        checkins. More distinct checkins means an earier position in the overall
-        list of AUXCs. If two or more AUXCs have the same number of distinct
-        checkins, then they are sorted by callsign lexicographically."""
+        checkins, then participation. More distinct checkins means an earier
+        position in the overall list of AUXCs. If two or more AUXCs have the
+        same number of distinct checkins and same level of participation, then
+        they are sorted by callsign lexicographically."""
 
         if not isinstance(other, Auxc):
             raise TypeError(f'{self.callsign}: '\
                             'The other value is not an instance of Auxc')
         
         if self.num_distinct_checkins() == other.num_distinct_checkins():
-            # Same number of distinct checkins, so order lexicographically.
-            return self.callsign > other.callsign
+            # Same number of distinct checkins, so check participation.
+            if self.net_participation() == other.net_participation():
+                # Same participation as well, order by callsign
+                return self.callsign > other.callsign
+            return self.net_participation() < other.net_participation()
         return self.num_distinct_checkins() < other.num_distinct_checkins()
      
     # -------------------------------------------------------------------------
