@@ -1,6 +1,6 @@
 from string import capwords
 
-from callsign_processing import validate_callsign
+from callsign_processing import Callsign, validate_callsign
 from transport_modes import mode_validator
 from gateway import gateway_validator
 from location import location_check
@@ -24,7 +24,7 @@ class Checkin:
     max_week_number = 0
 
     def __init__(self, week_number: str,
-                 callsign: str,
+                 callsign: Callsign,
                  transport_mode: str,
                  gateway: str,
                  frequency: str,
@@ -53,7 +53,22 @@ class Checkin:
             self.state = state.upper()
         else:
             self.state = state.capitalize()
+        
+        # @TODO - put this conglomerate checkin validation in a separate method
+        #
+        # One last bit of validation for Telnet modes.
+        #  - Frequency must be 0.000
+        #  - N/A and STARLINK are the only valid RMS values
 
+        if self.transport_mode == 'TELNET':
+            if self.gateway not in ['N/A', 'STARLINK']:
+                raise ValueError(f'Transport mode is TELNET but gateway'
+                                 f' is invalid ({self.gateway})')
+            elif self.frequency != 0.000:
+                raise ValueError(f'Transport mode is TELNET but frequency'
+                                 f' is not 0.000 ({self.frequency})')
+            elif self.gateway == 'STARLINK' and self.callsign.suffix != 'M':
+                raise ValueError(f'Starlink checkins must be /M mobile: (self.callsign)')
     #--------------------------------------------------------------------------
     def check_frequency(self, frequency: str) -> float:
         canonical_frequency = None
@@ -82,7 +97,7 @@ class Checkin:
         return checked_mode
 
     #--------------------------------------------------------------------------
-    def check_callsign(self, callsign: str) -> str:
+    def check_callsign(self, callsign: str) -> Callsign:
         canonical_callsign = validate_callsign(callsign)
         if canonical_callsign is None:
             raise ValueError(f'Callsign: {callsign}')
@@ -104,7 +119,7 @@ class Checkin:
         
     #--------------------------------------------------------------------------
     def __repr__(self) -> str:
-        return f'{self.week_number},{self.callsign},{self.transport_mode},'\
+        return f'{self.week_number},{self.callsign.callsign},{self.transport_mode},'\
             f'{self.gateway},{self.frequency:.4f},{self.location},'\
             f'{self.state}'
     #--------------------------------------------------------------------------
@@ -113,7 +128,7 @@ class Checkin:
 
     def as_dict(self) -> dict:
         return {'week_number' : self.week_number,
-                   'callsign' : self.callsign,
+                   'callsign' : self.callsign.callsign,
                    'transport_mode' : self.transport_mode,
                    'gateway' : self.gateway,
                    'frequency' : self.frequency,

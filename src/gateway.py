@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------
 
 import re
-from callsign_processing import validate_callsign
+from callsign_processing import Callsign, validate_callsign
 
 
 # -----------------------------------------------------------------------------
@@ -29,23 +29,21 @@ def gateway_validator(raw_gateway_id: str) -> str:
             For example W7YAM-10
         3) a callsign only - often seen with HF RMS gateways and the mesh.
             For example: AI7NC (a mesh gateway in Eugene)
+        4) Starlink - when the Starlink service is being used for mobile
+           operations.
     Returns gateway_id
     """
     if not isinstance(raw_gateway_id, str):
-        raise ValueError(f'Unknow value for a gateway identifier: {raw_gateway_id}')
+        raise ValueError(f'Unknown value for a gateway identifier: {raw_gateway_id}')
     
     canonical_gateway_id = raw_gateway_id.strip().upper()
 
     if NA_pattern.match(canonical_gateway_id):
         return 'N/A'
+    elif canonical_gateway_id == 'STARLINK':
+        return 'STARLINK'
     
-    # The gateway must use a callsign, possibly with an SSID.
-    gateway_id_parts = canonical_gateway_id.split(sep='-') # Might have to use a RE here.
-
-    # We should have a callsign in gateway_parts[0] and, if there is an SSID,
-    # that should be in gateway_parts[1].
-
-    validated_gw_callsign = validate_callsign(gateway_id_parts[0])
+    validated_gw_callsign = validate_callsign(canonical_gateway_id)
     if validated_gw_callsign is None:
         raise ValueError('Gateway has an invalid callsign: '
                          f'{raw_gateway_id}, {validated_gw_callsign}')
@@ -54,8 +52,8 @@ def gateway_validator(raw_gateway_id: str) -> str:
     # pattern. Now, let's see if there is an SSID and if so, see if it is in
     # the expected range.
 
-    if len(gateway_id_parts) > 1:
-        ssid_val = int(gateway_id_parts[1])
+    if len(validated_gw_callsign.suffix) > 1:
+        ssid_val = int(validated_gw_callsign.suffix)
         if not (ssid_val >= 0 and ssid_val <= 15):
             raise ValueError('Gateway has an invalid SSID: '
                              f'{raw_gateway_id}: {ssid_val}')

@@ -1,9 +1,35 @@
 import re
 
+class Callsign:
+    callsign_split_pattern = re.compile('^(.*)([-/])(.*)$')
+
+    def __init__(self, raw_callsign: str):
+
+        self.callsign = ""
+        self.suffix = ""
+        self.separator = ""
+
+        canonical_callsign = raw_callsign.strip().upper()
+
+        # Trim any callsigns that may have a suffix like /M or -10. Split at the
+        # suffix if necessary
+        cs_match = self.callsign_split_pattern.match(canonical_callsign)
+
+        if cs_match:
+            self.callsign = cs_match.group(1)
+            self.separator = cs_match.group(2)
+            self.suffix = cs_match.group(3)
+        else:
+            self.callsign = canonical_callsign
+
+    def __repr__(self):
+        return f"Callsign: {self.callsign}, " \
+                f"Separator = {self.separator}, " \
+                f"Suffix: {self.suffix}"
+
 class _CallsignProcessor:
     def __init__(self):
         self.patterns = self.create_callsign_matchers()
-        self.callsign_split_pattern = re.compile('^(.*)([-/])(.*)$')
         self.callsign_cache = {}
 
     def create_callsign_matchers(self):
@@ -57,32 +83,21 @@ class _CallsignProcessor:
         return callsign_matchers
 # -----------------------------------------------------------------------------
 
-    def remove_suffix(self, callsign: str) -> str:
-        """Trim any callsigns that may have a suffix like /M or -10"""
-        clean_callsign = callsign.strip()
-        clean_callsign = clean_callsign.upper()
-        cs_match = self.callsign_split_pattern.match(clean_callsign)
-        if cs_match:
-            return cs_match.group(1)
-        return callsign
-
-# -----------------------------------------------------------------------------
-    def validate(self, callsign: str) -> str:
+    def validate(self, callsign: str) -> Callsign:
         """Checks to see if a string is a probable amateur radio callsign."""
 
-        wip_callsign = callsign.strip().upper()
-        canonical_callsign = self.remove_suffix(wip_callsign)
+        canonical_callsign = Callsign(callsign)
 
-        call_seen_before_num = self.callsign_cache.get(canonical_callsign)
+        call_seen_before_num = self.callsign_cache.get(canonical_callsign.callsign)
         if call_seen_before_num is not None:
             # Seen the callsign before
-            self.callsign_cache[canonical_callsign] = call_seen_before_num + 1
+            self.callsign_cache[canonical_callsign.callsign] = call_seen_before_num + 1
             return canonical_callsign
         
         # Not seen this callsign before. Better validate it.
         for pattern in self.patterns:
-            if pattern.match(canonical_callsign):
-                self.callsign_cache.setdefault(canonical_callsign, 1)
+            if pattern.match(canonical_callsign.callsign):
+                self.callsign_cache.setdefault(canonical_callsign.callsign, 1)
                 return canonical_callsign
         return None
 # -----------------------------------------------------------------------------
@@ -110,4 +125,4 @@ def validate_callsign(callsign):
 def print_callsign_cache():
     cs_processor.dump_callsign_cache()
 
-__all__ = ['validate_callsign', 'print_callsign_cache']
+__all__ = ['Callsign', 'validate_callsign', 'print_callsign_cache']
