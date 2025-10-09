@@ -26,7 +26,13 @@ class Callsign:
         return f"Callsign: {self.callsign}, " \
                 f"Separator = {self.separator}, " \
                 f"Suffix: {self.suffix}"
+    
+    def __lt__(self, other):
+        return self.callsign < other.callsign
 
+    def __str__(self):
+        return self.callsign
+    
 class _CallsignProcessor:
     def __init__(self):
         self.patterns = self.create_callsign_matchers()

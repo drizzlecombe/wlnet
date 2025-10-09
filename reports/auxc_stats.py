@@ -82,7 +82,7 @@ class Auxc:
 
     # -------------------------------------------------------------------------
     def __init__(self, callsign):
-        self.callsign = callsign
+        self.callsign = callsign.callsign
         self.is_AEC = False
         if Auxc.aec_set is not None:
             self.is_AEC = self.callsign in Auxc.aec_set
@@ -212,7 +212,7 @@ def checkins_by_callsign(checkins: list[Checkin]) -> Dict[str, Auxc]:
     for checkin in checkins:
         # Every AUXC is given a list to hold their checkins. Add any checkin for
         # that AUXC to their list.
-        auxc = auxcs.setdefault(checkin.callsign, Auxc(checkin.callsign))
+        auxc = auxcs.setdefault(checkin.callsign.callsign, Auxc(checkin.callsign))
         auxc.add_checkin(checkin)
     return auxcs
 
