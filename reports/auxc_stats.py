@@ -12,7 +12,7 @@
 
 import argparse
 import csv
-from typing import Dict
+from typing import Dict, List
 
 # NOTE: the following modules has to be in the PYTHONPATH For example, running
 # from the root of this project: $ export PYTHONPATH=./src
@@ -86,6 +86,8 @@ class Auxc:
         self.is_AEC = False
         if Auxc.aec_set is not None:
             self.is_AEC = self.callsign in Auxc.aec_set
+
+        # Assume that this AUXC has made no checkins yet.    
         self.distinct_checkin_cnt = 0
 
         # Only one check-in per week is counted. This is called a distinct
@@ -93,10 +95,19 @@ class Auxc:
         # if any week has exclusively a non-RF distinct check-in. This
         # dictionary is keyed by distinct check-in week.
         self.distinct_checkin_type = {}
+
+        # This is the proportion of the number of check-ins from the AUXC's
+        # first check-in compared with the actual number of potential check-ins
+        # from that first check-in. How many did he do compared to how many he
+        # could've done.
         self.participation = 0.0
 
         # This is the first recorded week that the AUXC checked in.
         self.first_checkin_week = Auxc.current_week_number
+
+        # The distinct gateways (RMSs) the AUXC checked-in through. This
+        # differentiates by SSID. For example, KD7ZDO-11 and KD7ZDO-12 are
+        # considered distinct gateways.
         self.distinct_gateways = set()
 
     # -------------------------------------------------------------------------
@@ -155,6 +166,10 @@ class Auxc:
     # -------------------------------------------------------------------------
     def weeks_since_last_checkin(self) -> int:
         return Auxc.current_week_number - max(self.distinct_checkin_type.keys())
+
+    # -------------------------------------------------------------------------
+    def checked_in_specified_week(self, week_number) -> bool:
+        return week_number in self.distinct_checkin_type.keys()
     
     # -------------------------------------------------------------------------
     def __lt__(self, other):
@@ -217,6 +232,19 @@ def checkins_by_callsign(checkins: list[Checkin]) -> Dict[str, Auxc]:
     return auxcs
 
 # -----------------------------------------------------------------------------
+def checkin_count_by_week(auxcs: List[Auxc], start_week_num: int, 
+                          n_previous: int) -> Dict[int, int]:
+    checkin_count_by_week = {}
+    current_week_number = start_week_num
+    for i in range(n_previous):
+        checkin_count_by_week[current_week_number] = 0
+        for auxc in auxcs:
+            if auxc.checked_in_specified_week(current_week_number):
+                checkin_count_by_week[current_week_number] += 1
+        current_week_number -= 1
+    return checkin_count_by_week
+
+# -----------------------------------------------------------------------------
 def main():
     # Set up command line parsing.
     # Not implemented - use this one day to generate more date-flexible reports
@@ -233,22 +261,29 @@ def main():
 
     (valid_checkins, invalid_checkins) = validate_checkins(checkins)
     print(f'Number of checkins after or including week '
-          f'{CARES_net_start_week_num}: {len(valid_checkins)}')
+          f'{CARES_net_start_week_num}: {len(valid_checkins)}\n')
 
     # The CARES net has been running for this number of weeks. It started out as
     # the LOARES net, but was brought to the county as a whole two years after
     # its inception.
     net_operational_weeks = Checkin.max_week_number - CARES_net_start_week_num + 1
-    print(f'The net has been running {net_operational_weeks} weeks')
+    print(f'The net has been running {net_operational_weeks} weeks\n')
 
     # Set up the Auxc class before we start using instances of it.
     Auxc.net_running_weeks = net_operational_weeks
     Auxc.current_week_number = Checkin.max_week_number
     Auxc.aec_set = config.get_aecs()
 
+    # List out the AUXCs' checkin information
     auxcs = checkins_by_callsign(valid_checkins)
     for auxc in sorted(auxcs.values(), reverse=True):
         print(auxc)
+    print()
+
+    # How many distinct check-ins for each of the previous N weeks?
+    week_cnts = checkin_count_by_week(auxcs.values(), Checkin.max_week_number, 10)
+    for week in sorted(week_cnts.keys(), reverse=True):
+        print(f'{week}, {week_cnts[week]}')
 
 # -----------------------------------------------------------------------------
 
