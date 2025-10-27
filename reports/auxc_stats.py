@@ -260,8 +260,6 @@ def main():
                              CARES_net_start_week_num)
 
     (valid_checkins, invalid_checkins) = validate_checkins(checkins)
-    print(f'Number of checkins after or including week '
-          f'{CARES_net_start_week_num}: {len(valid_checkins)}\n')
 
     # The CARES net has been running for this number of weeks. It started out as
     # the LOARES net, but was brought to the county as a whole two years after
@@ -275,11 +273,18 @@ def main():
     Auxc.aec_set = config.get_aecs()
 
     # List out the AUXCs' checkin information
+    total_distinct_checkins = 0
     auxcs = checkins_by_callsign(valid_checkins)
     for auxc in sorted(auxcs.values(), reverse=True):
+        total_distinct_checkins += auxc.num_distinct_checkins()
         print(auxc)
     print()
 
+    print(f'Total number of distinct check-ins after or including week '
+          f'{CARES_net_start_week_num}: {total_distinct_checkins}\n')
+    print(f'Total number of all checkins after or including week '
+          f'{CARES_net_start_week_num}: {len(valid_checkins)}\n')
+    
     # How many distinct check-ins for each of the previous N weeks?
     week_cnts = checkin_count_by_week(auxcs.values(), Checkin.max_week_number, 10)
     for week in sorted(week_cnts.keys(), reverse=True):
