@@ -23,6 +23,11 @@ class Checkin:
 
     max_week_number = 0
 
+    # Some check-in type indicators
+    CHECKIN_NONE = 0
+    CHECKIN_RF = 1
+    CHECKIN_INET = 2 
+
     def __init__(self, week_number: str,
                  callsign: Callsign,
                  transport_mode: str,
@@ -44,7 +49,6 @@ class Checkin:
         self.callsign = self.check_callsign(callsign)
         self.transport_mode = self.check_mode(transport_mode, self.frequency)
         self.gateway = gateway_validator(gateway)
-
         self.location = self.check_location(location)
         self.county = county
         if not isinstance(state, str):
@@ -54,21 +58,48 @@ class Checkin:
         else:
             self.state = state.capitalize()
         
-        # @TODO - put this conglomerate checkin validation in a separate method
-        #
-        # One last bit of validation for Telnet modes.
-        #  - Frequency must be 0.000
-        #  - N/A and STARLINK are the only valid RMS values
-
+        # One last bit of validation for modes and setting the type of check-in
+        # based on RF or Internet use.
         if self.transport_mode == 'TELNET':
-            if self.gateway not in ['N/A', 'STARLINK']:
+            #  - N/A and STARLINK are the only valid RMS values for TELNET
+            if self.gateway == 'N/A':
+                self.type = Checkin.CHECKIN_INET
+            elif self.gateway == 'STARLINK':
+                # Only mobile operations are considered STARLINK check-ins
+                if self.callsign.suffix == 'M':
+                    self.type = Checkin.CHECKIN_RF
+                else:
+                    raise ValueError(
+                        f'Starlink checkins must be /M mobile: (self.callsign)')
+            else:
                 raise ValueError(f'Transport mode is TELNET but gateway'
                                  f' is invalid ({self.gateway})')
-            elif self.frequency != 0.000:
+            #  For all TELNET modes the frequency must be 0.000
+            if self.frequency != 0.0:
                 raise ValueError(f'Transport mode is TELNET but frequency'
                                  f' is not 0.000 ({self.frequency})')
-            elif self.gateway == 'STARLINK' and self.callsign.suffix != 'M':
-                raise ValueError(f'Starlink checkins must be /M mobile: (self.callsign)')
+        elif self.transport_mode == 'MESH':
+            if self.frequency == 0.0:
+                self.type = Checkin.CHECKIN_RF
+            else:
+                raise ValueError('Transport mode is MESH but frequency is not '
+                                 f'zero: {self.transport_mode}, '
+                                 f'{self.frequency : .4f}')
+        elif self.transport_mode == 'WEBMAIL':
+            if self.frequency == 0.0:
+                self.type = Checkin.CHECKIN_INET
+            else:
+                raise ValueError('Transport mode is WEBMAIL but frequency is not '
+                                 f'zero: {self.transport_mode}, '
+                                 f'{self.frequency : .4f}')
+        elif self.frequency > 0.0:
+            # Assume that this is an RF mode
+            self.type = Checkin.CHECKIN_RF
+        else:
+            raise ValueError('Check-in is an RF mode but has a either a zero '
+                             f'or negative frequency: {self.transport_mode}, '
+                             f'{self.frequency : .4f}')
+
     #--------------------------------------------------------------------------
     def check_frequency(self, frequency: str) -> float:
         canonical_frequency = None
@@ -94,7 +125,7 @@ class Checkin:
             self.transport_mode = checked_mode
         else:
             raise ValueError(f'Mode: {self.transport_mode}')
-        return checked_mode
+        return checked_mode.upper()
 
     #--------------------------------------------------------------------------
     def check_callsign(self, callsign: str) -> Callsign:
