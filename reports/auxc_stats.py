@@ -122,17 +122,23 @@ class Auxc:
             NO_CHECKIN)
         
         # TODO: Put the non-RF mode values in the configuration file.
+        # TODO: This logic should shift to the Checkin class.
         if checkin.transport_mode in ['TELNET', 'WEBMAIL', 'SMTP']:
             # Don't update the distinct checkin type for this week if it is
             # already an RF_CHECKIN type. Only upgrade a NO_CHECKIN.
             if self.distinct_checkin_type[checkin.week_number] == NO_CHECKIN:
-                self.distinct_checkin_type[checkin.week_number] = NON_RF_CHECKIN
+                # TODO: need to also check that the AUXC used the /M modifier
+                # (even though lack of this forces an exception in the Checkin class)
+                if checkin.transport_mode == 'TELNET' and checkin.gateway == 'STARLINK':
+                    self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
+                else:
+                    self.distinct_checkin_type[checkin.week_number] = NON_RF_CHECKIN
         else:
             # Since we have an RF_CHECKIN - these trump all other types. No need
             # to check what we have already set - just force this type.
             self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
 
-        if checkin.gateway != 'N/A':
+        if checkin.gateway not in ['N/A', 'STARLINK']:
             self.distinct_gateways.add(checkin.gateway)
 
         # Participation is monitored from the first week that the AUXC checked
