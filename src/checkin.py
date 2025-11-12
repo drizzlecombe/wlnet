@@ -85,11 +85,12 @@ class Checkin:
                 raise ValueError('Transport mode is MESH but frequency is not '
                                  f'zero: {self.transport_mode}, '
                                  f'{self.frequency : .4f}')
-        elif self.transport_mode == 'WEBMAIL':
+        elif self.transport_mode in ['SMTP', 'WEBMAIL']:
             if self.frequency == 0.0:
                 self.type = Checkin.CHECKIN_INET
             else:
-                raise ValueError('Transport mode is WEBMAIL but frequency is not '
+                raise ValueError(f'Transport mode is {self.transport_mode} but '
+                                 'frequency is not '
                                  f'zero: {self.transport_mode}, '
                                  f'{self.frequency : .4f}')
         elif self.frequency > 0.0:
