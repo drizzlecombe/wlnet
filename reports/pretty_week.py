@@ -109,11 +109,23 @@ def strip_fields(week_rows):
     return stripped_rows
 
 # -----------------------------------------------------------------------------
+def count_decimal_places(frequency: str) -> int:
+    """
+    Counts the number of decimal places in a string representing a floating
+    point number (frequency)
+    """
+    if '.' in frequency:
+        return len(frequency.split('.')[-1])
+    else:
+        return 0
+    
+# -----------------------------------------------------------------------------
 def analyse_rows(week_rows):
     longest_week_number = 0
     longest_auxc_callsign = 0
     longest_transport_mode = 0
     longest_rms_callsign = 0
+    most_rms_frequency_dps = 0
 
     for row in week_rows:
         week_number_len = len(row[CSVFields.WEEK_NUMBER.value])
@@ -132,15 +144,20 @@ def analyse_rows(week_rows):
         if rms_callsign_len > longest_rms_callsign:
             longest_rms_callsign = rms_callsign_len
 
-    print(f'Longest week number is {longest_week_number} characters')
-    print(f'Longest AUXC callsign is {longest_auxc_callsign} characters')
-    print(f'Longest transport mode is {longest_transport_mode} characters')
-    print(f'Longest RMS callsign is {longest_rms_callsign} characters')
+        freq_dps = count_decimal_places(row[CSVFields.RMS_FREQUENCY.value])
+        if freq_dps > most_rms_frequency_dps:
+            most_rms_frequency_dps = freq_dps
+
+    # print(f'Longest week number is {longest_week_number} characters')
+    # print(f'Longest AUXC callsign is {longest_auxc_callsign} characters')
+    # print(f'Longest transport mode is {longest_transport_mode} characters')
+    # print(f'Longest RMS callsign is {longest_rms_callsign} characters')
 
     return [longest_week_number,
         longest_auxc_callsign,
         longest_transport_mode,
-        longest_rms_callsign]
+        longest_rms_callsign,
+        most_rms_frequency_dps]
 # -----------------------------------------------------------------------------
 def pprint_rows(auxc_rows, field_lengths_max):
     for row in auxc_rows:
@@ -170,10 +187,15 @@ def pprint_rows(auxc_rows, field_lengths_max):
         current_output_row += PADDING
 
         # Need to align the frequency - which is a floating point value - on the
-        # decimal point. Assume three decimal places (although, we'll have to
-        # accommodate four dps for HF at some point)
+        # decimal point. Usually, this will be 3 decimal places if everyone
+        # checks in not using HF. If someone uses HF, then it is likely that
+        # we'll have to accommodate four dps.
         freq = float(row[CSVFields.RMS_FREQUENCY.value])
-        current_output_row += f"{freq:7.3f}{SEPARATOR}"
+        max_decimal_places = field_lengths_max[CSVFields.RMS_FREQUENCY.value]
+        if max_decimal_places == 3:
+            current_output_row += f"{freq:7.3f}{SEPARATOR}"
+        elif max_decimal_places == 4:
+            current_output_row += f"{freq:8.4f}{SEPARATOR}"
 
         current_output_row += PADDING
 
