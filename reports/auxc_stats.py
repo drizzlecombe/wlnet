@@ -110,6 +110,9 @@ class Auxc:
         # considered distinct gateways.
         self.distinct_gateways = set()
 
+        # How many times has this AUXC checked in using Starlink
+        self.used_starlink = 0
+
     # -------------------------------------------------------------------------
     def add_checkin(self, checkin):
         if not isinstance(checkin, Checkin):
@@ -131,6 +134,7 @@ class Auxc:
                 # (even though lack of this forces an exception in the Checkin class)
                 if checkin.transport_mode == 'TELNET' and checkin.gateway == 'STARLINK':
                     self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
+                    self.used_starlink += 1
                 else:
                     self.distinct_checkin_type[checkin.week_number] = NON_RF_CHECKIN
         else:
@@ -251,6 +255,20 @@ def checkin_count_by_week(auxcs: List[Auxc], start_week_num: int,
     return checkin_count_by_week
 
 # -----------------------------------------------------------------------------
+# The Starlink report - who has used Starlink whilst mobile.
+def list_starlink_checkins(auxcs):
+    print("AUXCs that have checked in using Starlink while mobile:")
+    starlink_auxcs = []
+    for auxc in auxcs.values():
+        if auxc.used_starlink > 0:
+            starlink_auxcs.append(auxc)
+
+    # Sort the list according to the number of times each AUXC used Starlink
+    sorted_auxcs = sorted(starlink_auxcs, key=lambda auxc: auxc.used_starlink, reverse=True)
+    for star_auxc in sorted_auxcs:
+        print(f'{star_auxc.callsign}, {star_auxc.used_starlink}')
+
+# -----------------------------------------------------------------------------
 def main():
     # Set up command line parsing.
     # Not implemented - use this one day to generate more date-flexible reports
@@ -295,6 +313,10 @@ def main():
     week_cnts = checkin_count_by_week(auxcs.values(), Checkin.max_week_number, 10)
     for week in sorted(week_cnts.keys(), reverse=True):
         print(f'{week}, {week_cnts[week]}')
+    
+    # List out the AUXCs who used Starlink to check-in whilst in the field
+    print()
+    list_starlink_checkins(auxcs)
 
 # -----------------------------------------------------------------------------
 
