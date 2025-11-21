@@ -219,5 +219,4 @@ if __name__ == '__main__':
     week_rows = load_csv_file(file_name, NUM_HEADER_LINES, int(week_number))
     clean_week_rows = strip_fields(week_rows)
     field_lengths_max = analyse_rows(clean_week_rows)
-    print()
     pprint_rows(clean_week_rows, field_lengths_max)
