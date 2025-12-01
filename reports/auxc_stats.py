@@ -259,9 +259,12 @@ def checkins_by_mode(checkins: list[Checkin]) -> list[(str, int)]:
     sorted_mode_counts = sorted(mode_counts.items(), key=lambda item: item[1], reverse=True)
     
     # TODO: Break out this display code.
-    print('Transport mode counts')
+    print('Transport mode counts for all check-ins')
+    total_checkins = sum([c[1] for c in sorted_mode_counts])
     for (mode, count) in sorted_mode_counts:
-        print(f'{mode}, {count}')
+        proportion = (100 * count) / float(total_checkins)
+        print(f'{mode}, {count}, {proportion:.1f}')
+    print(f'Total, {total_checkins}')
     return sorted_mode_counts
 
 # -----------------------------------------------------------------------------
