@@ -1,7 +1,7 @@
 from string import capwords
 
 from callsign_processing import Callsign, validate_callsign
-from transport_modes import mode_validator
+from transport_modes import mode_validator, is_mode_hf
 from gateway import gateway_validator
 from location import location_check
 
@@ -48,6 +48,7 @@ class Checkin:
 
         self.callsign = self.check_callsign(callsign)
         self.transport_mode = self.check_mode(transport_mode, self.frequency)
+        self.is_mode_HF = is_mode_hf(self.transport_mode, self.frequency)
         self.gateway = gateway_validator(gateway)
         self.location = self.check_location(location)
         self.county = county

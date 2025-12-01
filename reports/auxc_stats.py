@@ -12,11 +12,11 @@
 
 import argparse
 import csv
-from typing import Dict, List
 
 # NOTE: the following modules has to be in the PYTHONPATH For example, running
 # from the root of this project: $ export PYTHONPATH=./src
 import config
+
 from checkin import validate_checkins, Checkin
 
 # ------------------------------------------------------------------------------
@@ -223,9 +223,9 @@ class Auxc:
     # -------------------------------------------------------------------------
     def __str__(self):
         return self.__repr__()
+    
 # -----------------------------------------------------------------------------
-
-def checkins_by_callsign(checkins: list[Checkin]) -> Dict[str, Auxc]:
+def checkins_by_callsign(checkins: list[Checkin]) -> dict[str, Auxc]:
     """Runs through all the checkins and arranges them by the operator's
     callsign
     
@@ -242,8 +242,31 @@ def checkins_by_callsign(checkins: list[Checkin]) -> Dict[str, Auxc]:
     return auxcs
 
 # -----------------------------------------------------------------------------
-def checkin_count_by_week(auxcs: List[Auxc], start_week_num: int, 
-                          n_previous: int) -> Dict[int, int]:
+def checkins_by_mode(checkins: list[Checkin]) -> list[(str, int)]:
+    """Runs through all the checkins and arranges them by the transport mode
+    used to check-in.
+    
+    Results in a sorted list. Each element is a mode name and count.
+    """
+    mode_counts = {}
+    for checkin in checkins:
+        transport_mode = checkin.transport_mode
+        if checkin.is_mode_HF:
+            transport_mode = 'HF'
+        current_mode_count = mode_counts.setdefault(transport_mode, 0)
+        mode_counts[transport_mode] = current_mode_count + 1
+    
+    sorted_mode_counts = sorted(mode_counts.items(), key=lambda item: item[1], reverse=True)
+    
+    # TODO: Break out this display code.
+    print('Transport mode counts')
+    for (mode, count) in sorted_mode_counts:
+        print(f'{mode}, {count}')
+    return sorted_mode_counts
+
+# -----------------------------------------------------------------------------
+def checkin_count_by_week(auxcs: list[Auxc], start_week_num: int, 
+                          n_previous: int) -> dict[int, int]:
     checkin_count_by_week = {}
     current_week_number = start_week_num
     for i in range(n_previous):
@@ -255,8 +278,11 @@ def checkin_count_by_week(auxcs: List[Auxc], start_week_num: int,
     return checkin_count_by_week
 
 # -----------------------------------------------------------------------------
-# The Starlink report - who has used Starlink whilst mobile.
-def list_starlink_checkins(auxcs):
+# Functions that print out a report component
+# -----------------------------------------------------------------------------
+
+def list_starlink_checkins(auxcs: dict[str, Auxc]) -> None:
+    # The Starlink report - who has used Starlink whilst mobile.
     print("AUXCs that have checked in using Starlink while mobile:")
     starlink_auxcs = []
     for auxc in auxcs.values():
@@ -267,6 +293,16 @@ def list_starlink_checkins(auxcs):
     sorted_auxcs = sorted(starlink_auxcs, key=lambda auxc: auxc.used_starlink, reverse=True)
     for star_auxc in sorted_auxcs:
         print(f'{star_auxc.callsign}, {star_auxc.used_starlink}')
+    print()
+
+# -----------------------------------------------------------------------------
+def list_last_N_weeks_distinct(auxcs: dict[str, Auxc], n: int) -> None:
+    # How many distinct check-ins for each of the previous N weeks?
+    print(f'Distinct check-in counts for the Last {n} weeks')
+    week_cnts = checkin_count_by_week(auxcs.values(), Checkin.max_week_number, 10)
+    for week in sorted(week_cnts.keys(), reverse=True):
+        print(f'{week}, {week_cnts[week]}')
+    print()
 
 # -----------------------------------------------------------------------------
 def main():
@@ -289,7 +325,6 @@ def main():
     # the LOARES net, but was brought to the county as a whole two years after
     # its inception.
     net_operational_weeks = Checkin.max_week_number - CARES_net_start_week_num + 1
-    print(f'The net has been running {net_operational_weeks} weeks\n')
 
     # Set up the Auxc class before we start using instances of it.
     Auxc.net_running_weeks = net_operational_weeks
@@ -304,19 +339,21 @@ def main():
         print(auxc)
     print()
 
+    #
+    # Print out the summary information
+    #
+    print(f'The net has been running {net_operational_weeks} weeks\n')
     print(f'Total number of distinct check-ins after or including week '
           f'{CARES_net_start_week_num}: {total_distinct_checkins}\n')
     print(f'Total number of all checkins after or including week '
           f'{CARES_net_start_week_num}: {len(valid_checkins)}\n')
     
-    # How many distinct check-ins for each of the previous N weeks?
-    week_cnts = checkin_count_by_week(auxcs.values(), Checkin.max_week_number, 10)
-    for week in sorted(week_cnts.keys(), reverse=True):
-        print(f'{week}, {week_cnts[week]}')
-    
+    # list distinct check-ins for the previous N weeks
+    list_last_N_weeks_distinct(auxcs, 10)
     # List out the AUXCs who used Starlink to check-in whilst in the field
-    print()
     list_starlink_checkins(auxcs)
+    # The count of all check-ins by mode and ordered by the check-in count.
+    checkins_by_mode(valid_checkins)
 
 # -----------------------------------------------------------------------------
 
