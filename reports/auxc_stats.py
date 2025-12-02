@@ -256,17 +256,19 @@ def checkins_by_mode(checkins: list[Checkin]) -> list[(str, int)]:
         current_mode_count = mode_counts.setdefault(transport_mode, 0)
         mode_counts[transport_mode] = current_mode_count + 1
     
-    sorted_mode_counts = sorted(mode_counts.items(), key=lambda item: item[1], reverse=True)
-    
-    # TODO: Break out this display code.
+    sorted_mode_counts = sorted(mode_counts.items(),
+                                key=lambda item: item[1], reverse=True)
+
+    return sorted_mode_counts
+
+def display_checkins_by_mode(mode_counts: dict[str, int]) -> None:
     print('Transport mode counts for all check-ins')
-    total_checkins = sum([c[1] for c in sorted_mode_counts])
-    for (mode, count) in sorted_mode_counts:
+    total_checkins = sum([c[1] for c in mode_counts])
+    for (mode, count) in mode_counts:
         proportion = count / float(total_checkins)
         print(f'{mode}, {count}, {proportion:.3f}')
     print(f'Total, {total_checkins}')
-    return sorted_mode_counts
-
+    
 # -----------------------------------------------------------------------------
 def checkin_count_by_week(auxcs: list[Auxc], start_week_num: int, 
                           n_previous: int) -> dict[int, int]:
@@ -284,7 +286,7 @@ def checkin_count_by_week(auxcs: list[Auxc], start_week_num: int,
 # Functions that print out a report component
 # -----------------------------------------------------------------------------
 
-def list_starlink_checkins(auxcs: dict[str, Auxc]) -> None:
+def starlink_checkins(auxcs: dict[str, Auxc]) -> None:
     # The Starlink report - who has used Starlink whilst mobile.
     print("AUXCs that have checked in using Starlink while mobile:")
     starlink_auxcs = []
@@ -293,8 +295,12 @@ def list_starlink_checkins(auxcs: dict[str, Auxc]) -> None:
             starlink_auxcs.append(auxc)
 
     # Sort the list according to the number of times each AUXC used Starlink
-    sorted_auxcs = sorted(starlink_auxcs, key=lambda auxc: auxc.used_starlink, reverse=True)
-    for star_auxc in sorted_auxcs:
+    sorted_auxcs = sorted(starlink_auxcs,
+                          key=lambda auxc: auxc.used_starlink, reverse=True)
+    return sorted_auxcs
+
+def display_starlink_checkins(starlink_auxcs: list[Auxc]) -> None:
+    for star_auxc in starlink_auxcs:
         print(f'{star_auxc.callsign}, {star_auxc.used_starlink}')
     print()
 
@@ -353,10 +359,12 @@ def main():
     
     # list distinct check-ins for the previous N weeks
     list_last_N_weeks_distinct(auxcs, 10)
+    
     # List out the AUXCs who used Starlink to check-in whilst in the field
-    list_starlink_checkins(auxcs)
+    display_starlink_checkins(starlink_checkins(auxcs))
+
     # The count of all check-ins by mode and ordered by the check-in count.
-    checkins_by_mode(valid_checkins)
+    display_checkins_by_mode(checkins_by_mode(valid_checkins))
 
 # -----------------------------------------------------------------------------
 
