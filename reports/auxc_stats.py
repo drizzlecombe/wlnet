@@ -230,7 +230,7 @@ def checkins_by_callsign(checkins: list[Checkin]) -> dict[str, Auxc]:
     callsign
     
     Results in a dict, keyed by callsign. The value associated with a
-    callsign is a list of checkins
+    callsign is an Auxc object. Each Auxc has a list of check-ins. 
     
     """
     auxcs = {}
