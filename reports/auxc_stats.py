@@ -130,11 +130,12 @@ class Auxc:
             # Don't update the distinct checkin type for this week if it is
             # already an RF_CHECKIN type. Only upgrade a NO_CHECKIN.
             if self.distinct_checkin_type[checkin.week_number] == NO_CHECKIN:
-                # TODO: need to also check that the AUXC used the /M modifier
+                # check that the AUXC used the /M modifier
                 # (even though lack of this forces an exception in the Checkin class)
-                if checkin.transport_mode == 'TELNET' and checkin.gateway == 'STARLINK':
+                if checkin.transport_mode == 'TELNET' and \
+                    checkin.gateway == 'STARLINK' and \
+                    checkin.is_mobile:
                     self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
-                    self.used_starlink += 1
                 else:
                     self.distinct_checkin_type[checkin.week_number] = NON_RF_CHECKIN
         else:
@@ -142,6 +143,15 @@ class Auxc:
             # to check what we have already set - just force this type.
             self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
 
+        # Record any STARLINK mobile check-ins - a separate report lists all of
+        # an AUXC's STARLINK mobile (/M) check-ins regardless if they were
+        # distinct or not.
+        if checkin.transport_mode == 'TELNET' and \
+            checkin.gateway == 'STARLINK' and \
+                checkin.is_mobile:
+            self.used_starlink += 1
+
+        # Record the RF Gateway used for the check-in.
         if checkin.gateway not in ['N/A', 'STARLINK']:
             self.distinct_gateways.add(checkin.gateway)
 

@@ -47,6 +47,7 @@ class Checkin:
             Checkin.max_week_number = self.week_number
 
         self.callsign = self.check_callsign(callsign)
+        self.is_mobile = self.callsign.suffix == 'M'
         self.transport_mode = self.check_mode(transport_mode, self.frequency)
         self.is_mode_HF = is_mode_hf(self.transport_mode, self.frequency)
         self.gateway = gateway_validator(gateway)
@@ -67,7 +68,7 @@ class Checkin:
                 self.type = Checkin.CHECKIN_INET
             elif self.gateway == 'STARLINK':
                 # Only mobile operations are considered STARLINK check-ins
-                if self.callsign.suffix == 'M':
+                if self.is_mobile:
                     self.type = Checkin.CHECKIN_RF
                 else:
                     raise ValueError(
