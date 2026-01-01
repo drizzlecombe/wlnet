@@ -43,7 +43,8 @@ def is_mode_hf(mode: str, frequency: float) -> bool:
         if mode in _HF_modes:
             return True
         else:
-            raise ValueError(f'Frequency is HF ({frequency}) but mode is not: {mode}')
+            raise ValueError(f'Frequency is HF ({frequency}) but mode ' 
+                             f'is not valid for HF: {mode}')
     return False
 
 # -----------------------------------------------------------------------------
