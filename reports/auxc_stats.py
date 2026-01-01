@@ -340,6 +340,14 @@ def main():
 
     (valid_checkins, invalid_checkins) = validate_checkins(checkins)
 
+    if len(invalid_checkins) > 0:
+        print("\nRESOLVE THE FOLLOWING INVALID CHECK-INS")
+        print("---------------------------------------\n")
+        print("Week, Callsign")
+        for ic in invalid_checkins:
+            print(f"{ic['week_number']}, {ic['callsign']}")
+        return
+
     # The CARES net has been running for this number of weeks. It started out as
     # the LOARES net, but was brought to the county as a whole two years after
     # its inception.
