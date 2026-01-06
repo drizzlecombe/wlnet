@@ -49,7 +49,7 @@ def process_command_line():
 # -----------------------------------------------------------------------------
 
 def load_csv_file(csv_file_name: str, num_header_lines: int,
-                  col_names: list[str], threshold_week: int = 1) -> None:
+                  col_names: list[str], threshold_week: int = 1) -> list[dict[str, str]]:
     num_cols = len(col_names)
     raw_checkins = []
     with open(csv_file_name, "r", newline='') as csvfile:
@@ -75,10 +75,10 @@ class Auxc:
     aec_set = None
 
     # The current week number for the net
-    current_week_number = 0
+    current_week_number: int = 0
 
     # The CARES net has been running this many weeks
-    net_running_weeks = None
+    net_running_weeks:int = -1
 
     # -------------------------------------------------------------------------
     def __init__(self, callsign):
@@ -194,7 +194,7 @@ class Auxc:
     # -------------------------------------------------------------------------
     def __lt__(self, other):
         """AUXCs are sortable. They are ranked by the number of distinct
-        checkins, then participation. More distinct checkins means an earier
+        checkins, then participation. More distinct checkins means an earlier
         position in the overall list of AUXCs. If two or more AUXCs have the
         same number of distinct checkins and same level of participation, then
         they are sorted by callsign lexicographically."""
@@ -252,7 +252,7 @@ def checkins_by_callsign(checkins: list[Checkin]) -> dict[str, Auxc]:
     return auxcs
 
 # -----------------------------------------------------------------------------
-def checkins_by_mode(checkins: list[Checkin]) -> list[(str, int)]:
+def checkins_by_mode(checkins: list[Checkin]) -> dict[str, int]:
     """Runs through all the checkins and arranges them by the transport mode
     used to check-in.
     
@@ -266,15 +266,15 @@ def checkins_by_mode(checkins: list[Checkin]) -> list[(str, int)]:
         current_mode_count = mode_counts.setdefault(transport_mode, 0)
         mode_counts[transport_mode] = current_mode_count + 1
     
-    sorted_mode_counts = sorted(mode_counts.items(),
-                                key=lambda item: item[1], reverse=True)
+    sorted_mode_counts = dict(sorted(mode_counts.items(),
+                                key=lambda item: item[1], reverse=True))
 
     return sorted_mode_counts
 
 def display_checkins_by_mode(mode_counts: dict[str, int]) -> None:
     print('Transport mode counts for all check-ins')
-    total_checkins = sum([c[1] for c in mode_counts])
-    for (mode, count) in mode_counts:
+    total_checkins = sum([mode_counts[k] for k in mode_counts])
+    for mode, count in mode_counts.items():
         proportion = count / float(total_checkins)
         print(f'{mode}, {count}, {proportion:.3f}')
     print(f'Total, {total_checkins}')
@@ -296,16 +296,16 @@ def checkin_count_by_week(auxcs: list[Auxc], start_week_num: int,
 # Functions that print out a report component
 # -----------------------------------------------------------------------------
 
-def starlink_checkins(auxcs: dict[str, Auxc]) -> None:
+def starlink_checkins(auxcs: dict[str, Auxc]) -> list[Auxc]:
     # The Starlink report - who has used Starlink whilst mobile.
     print("AUXCs that have checked in using Starlink while mobile:")
-    starlink_auxcs = []
+    starlink_auxcs: list[Auxc] = []
     for auxc in auxcs.values():
         if auxc.used_starlink > 0:
             starlink_auxcs.append(auxc)
 
     # Sort the list according to the number of times each AUXC used Starlink
-    sorted_auxcs = sorted(starlink_auxcs,
+    sorted_auxcs: list[Auxc] = sorted(starlink_auxcs,
                           key=lambda auxc: auxc.used_starlink, reverse=True)
     return sorted_auxcs
 
@@ -318,7 +318,7 @@ def display_starlink_checkins(starlink_auxcs: list[Auxc]) -> None:
 def list_last_N_weeks_distinct(auxcs: dict[str, Auxc], n: int) -> None:
     # How many distinct check-ins for each of the previous N weeks?
     print(f'Distinct check-in counts for the Last {n} weeks')
-    week_cnts = checkin_count_by_week(auxcs.values(), Checkin.max_week_number, 10)
+    week_cnts = checkin_count_by_week(list(auxcs.values()), Checkin.max_week_number, 10)
     for week in sorted(week_cnts.keys(), reverse=True):
         print(f'{week}, {week_cnts[week]}')
     print()
@@ -330,9 +330,20 @@ def main():
     # (cl_num_header_lines, cl_raw_checkins_filename) = process_command_line()
 
     config.load_config_file('config.json')
-    raw_checkins_filename = config.get_raw_checkin_filename()
-    raw_checkins_col_names = config.get_raw_checkin_fieldnames()
-    CARES_net_start_week_num = config.get_start_week_num()
+    potential_raw_checkins_filename: str|None = config.get_raw_checkin_filename()
+    if potential_raw_checkins_filename is None:
+        raise ValueError('The raw checkin file name has not been assigned.')
+    raw_checkins_filename: str = str(potential_raw_checkins_filename)
+    
+    potential_col_names: list[str]|None = config.get_raw_checkin_fieldnames()
+    if potential_col_names is None:
+        raise ValueError("Couldn't find the column names in the config file.")
+    raw_checkins_col_names = potential_col_names
+    
+    potential_net_start_week_num: int|None = config.get_start_week_num()
+    if potential_net_start_week_num is None:
+        raise ValueError("The report's start week number has not been set.")
+    CARES_net_start_week_num: int = potential_net_start_week_num
 
     checkins = load_csv_file(raw_checkins_filename, 1,
                              raw_checkins_col_names,
@@ -345,18 +356,19 @@ def main():
         print("---------------------------------------\n")
         print("Week, Callsign")
         for ic in invalid_checkins:
-            print(f"{ic['week_number']}, {ic['callsign']}")
+            print(f"{ic.week_number}, {ic.callsign}")
         return
 
     # The CARES net has been running for this number of weeks. It started out as
     # the LOARES net, but was brought to the county as a whole two years after
     # its inception.
-    net_operational_weeks = Checkin.max_week_number - CARES_net_start_week_num + 1
+    net_operational_weeks: int = Checkin.max_week_number - CARES_net_start_week_num + 1
 
     # Set up the Auxc class before we start using instances of it.
     Auxc.net_running_weeks = net_operational_weeks
     Auxc.current_week_number = Checkin.max_week_number
-    Auxc.aec_set = config.get_aecs()
+
+    # Auxc.aec_set = config.get_aecs()
 
     # List out the AUXCs' checkin information
     total_distinct_checkins = 0

@@ -21,7 +21,7 @@ class Checkin:
     # The highest week number seen is considered to be the previous week's net
     # identifier.
 
-    max_week_number = 0
+    max_week_number: int = 0
 
     # Some check-in type indicators
     CHECKIN_NONE = 0
@@ -131,7 +131,7 @@ class Checkin:
         return checked_mode.upper()
 
     #--------------------------------------------------------------------------
-    def check_callsign(self, callsign: str) -> Callsign:
+    def check_callsign(self, callsign: Callsign) -> Callsign:
         canonical_callsign = validate_callsign(callsign)
         if canonical_callsign is None:
             raise ValueError(f'Callsign: {callsign}')
