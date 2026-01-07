@@ -153,9 +153,13 @@ class Checkin:
         
     #--------------------------------------------------------------------------
     def __repr__(self) -> str:
-        return f'{self.week_number},{self.callsign.callsign},{self.transport_mode},'\
-            f'{self.gateway},{self.frequency:.4f},{self.location},'\
-            f'{self.state}'
+        return f"{self.week_number}, "\
+               f"{self.callsign.callsign}, "\
+               f"{self.transport_mode}, " \
+               f"{self.gateway}, " \
+               f"{self.frequency:.4f}, " \
+               f"{self.location}, " \
+               f"{self.state}"
     #--------------------------------------------------------------------------
     def __str__(self) -> str:
         return self.__repr__()
