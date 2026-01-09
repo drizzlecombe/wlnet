@@ -24,7 +24,8 @@
 # -----------------------------------------------------------------------------
 
 import csv
-import enum
+from enum import IntEnum
+from operator import itemgetter
 import sys
 from typing import Tuple
 
@@ -39,7 +40,7 @@ SEPARATOR = ","
 SEPARATOR_WIDTH = len(SEPARATOR)
 
 # -----------------------------------------------------------------------------
-class CSVFields(enum.Enum):
+class DataField(IntEnum):
     WEEK_NUMBER = 0
     AUXC_CALLSIGN = 1
     TRANSPORT_MODE = 2
@@ -50,61 +51,67 @@ class CSVFields(enum.Enum):
     AUXC_STATE = 7
 
 # -----------------------------------------------------------------------------
-def validate_week(week_number: str) -> int:
+def validate_week(week_number: str) -> int | None:
     value = 0
     try:
         value = int(week_number)
     except:
-        raise ValueError(f"{sys.argv[0]}: Week number argument is not a number: {week_number}")
+        print(f"Error: {sys.argv[0]}: "
+              f"Week number argument is not an integer: {week_number}")
+        sys.exit(1)
     
     if value < 1 or value > 1000:
-        raise ValueError(f"{sys.argv[0]}: Week number is out of range: 1 < {week_number} < 1000")
+        print(f"Error: {sys.argv[0]}: "
+              f"Week number is out of range: 1 < {week_number} < 1000")
+        sys.exit(2)
 # -----------------------------------------------------------------------------
 
 def process_command_line() -> Tuple[str, str]:
     args_len = len(sys.argv)
-    pname = sys.argv[0]
+    programme_name = sys.argv[0]
     week_number = 0
     file_name = ""
     if args_len == 3:
         week_number = validate_week(sys.argv[1])
         file_name = sys.argv[2]
     elif args_len < 3:
-        raise ValueError(f"{pname}: Too few command line arguments")
+        raise ValueError(f"{programme_name}: Too few command line arguments")
     else:
-        raise ValueError(f"{pname}: Too many command line arguments")
+        raise ValueError(f"{programme_name}: Too many command line arguments")
 
     return (sys.argv[1], file_name)
 
 # -----------------------------------------------------------------------------
-def load_csv_file(csv_file_name: str, num_header_lines: int, week_number: int = 1):
+def load_csv_file(csv_file_name: str, num_header_lines: int, 
+                  week_number: int = 1) -> list[list[str]]:
     
-    raw_checkins = []
-    with open(csv_file_name, "r", newline='') as csvfile:
-        reader = csv.reader(csvfile)
+    raw_checkins: list[list[str]] = []
+    with open(csv_file_name, "r", newline='') as csv_file:
+        reader = csv.reader(csv_file)
         header_line_count = 0
         for checkin_line in reader:
             if header_line_count < num_header_lines:
                 header_line_count += 1
                 continue
-            # Ignore checkins for invalid week numbers
+            # Only load lines from the CSV file that match the week number
+            # specified.
             if int(checkin_line[0]) == week_number:
                 raw_checkins.append(checkin_line)
     return raw_checkins
 
 # -----------------------------------------------------------------------------
-def strip_fields(week_rows):
+def strip_fields(week_rows: list[list[str]]) -> list[list[str]]:
     stripped_rows = []
     for row in week_rows:
         clean_row = []
-        clean_row.append(row[CSVFields.WEEK_NUMBER.value].strip())
-        clean_row.append(row[CSVFields.AUXC_CALLSIGN.value].strip())
-        clean_row.append(row[CSVFields.TRANSPORT_MODE.value].strip())
-        clean_row.append(row[CSVFields.RMS_CALLSIGN.value].strip())
-        clean_row.append(row[CSVFields.RMS_FREQUENCY.value].strip())
-        clean_row.append(row[CSVFields.AUXC_CITY.value].strip())
-        clean_row.append(row[CSVFields.AUXC_COUNTY.value].strip())
-        clean_row.append(row[CSVFields.AUXC_STATE.value].strip())
+        clean_row.append(row[DataField.WEEK_NUMBER].strip())
+        clean_row.append(row[DataField.AUXC_CALLSIGN].strip())
+        clean_row.append(row[DataField.TRANSPORT_MODE].strip())
+        clean_row.append(row[DataField.RMS_CALLSIGN].strip())
+        clean_row.append(row[DataField.RMS_FREQUENCY].strip())
+        clean_row.append(row[DataField.AUXC_CITY].strip())
+        clean_row.append(row[DataField.AUXC_COUNTY].strip())
+        clean_row.append(row[DataField.AUXC_STATE].strip())
         stripped_rows.append(clean_row)
     return stripped_rows
 
@@ -120,31 +127,31 @@ def count_decimal_places(frequency: str) -> int:
         return 0
     
 # -----------------------------------------------------------------------------
-def analyse_rows(week_rows):
-    longest_week_number = 0
-    longest_auxc_callsign = 0
-    longest_transport_mode = 0
-    longest_rms_callsign = 0
-    most_rms_frequency_dps = 0
+def analyse_rows(week_rows: list[list[str]]) -> list[int]:
+    longest_week_number: int = 0
+    longest_auxc_callsign: int = 0
+    longest_transport_mode: int = 0
+    longest_rms_callsign: int = 0
+    most_rms_frequency_dps: int = 0
 
     for row in week_rows:
-        week_number_len = len(row[CSVFields.WEEK_NUMBER.value])
+        week_number_len = len(row[DataField.WEEK_NUMBER])
         if week_number_len > longest_week_number:
             longest_week_number = week_number_len
 
-        auxc_callsign_len = len(row[CSVFields.AUXC_CALLSIGN.value])
+        auxc_callsign_len = len(row[DataField.AUXC_CALLSIGN])
         if auxc_callsign_len > longest_auxc_callsign:
             longest_auxc_callsign = auxc_callsign_len
 
-        transport_mode_len = len(row[CSVFields.TRANSPORT_MODE.value])
+        transport_mode_len = len(row[DataField.TRANSPORT_MODE])
         if transport_mode_len > longest_transport_mode:
             longest_transport_mode = transport_mode_len
 
-        rms_callsign_len = len(row[CSVFields.RMS_CALLSIGN.value])
+        rms_callsign_len = len(row[DataField.RMS_CALLSIGN])
         if rms_callsign_len > longest_rms_callsign:
             longest_rms_callsign = rms_callsign_len
 
-        freq_dps = count_decimal_places(row[CSVFields.RMS_FREQUENCY.value])
+        freq_dps = count_decimal_places(row[DataField.RMS_FREQUENCY])
         if freq_dps > most_rms_frequency_dps:
             most_rms_frequency_dps = freq_dps
 
@@ -158,31 +165,40 @@ def analyse_rows(week_rows):
         longest_transport_mode,
         longest_rms_callsign,
         most_rms_frequency_dps]
+
 # -----------------------------------------------------------------------------
-def pprint_rows(auxc_rows, field_lengths_max):
+def sort_multiple_cols(xs, specs):
+
+    for key, reverse in reversed(specs):
+
+        xs.sort(key=itemgetter(key), reverse=reverse)
+
+    return xs
+# -----------------------------------------------------------------------------
+def pprint_rows(auxc_rows: list[list[str]], field_lengths_max: list[int]) -> None:
     for row in auxc_rows:
         # This is a little awkward because we do not use fixed widths for each
         # column in a row. A given column's width is set by the longest value
         # seen for that column plus some padding. 
         current_output_row = ""
 
-        current_output_row += f"{row[CSVFields.WEEK_NUMBER.value]}{SEPARATOR}" \
-            .ljust(field_lengths_max[CSVFields.WEEK_NUMBER.value] + SEPARATOR_WIDTH)
+        current_output_row += f"{row[DataField.WEEK_NUMBER]}{SEPARATOR}" \
+            .ljust(field_lengths_max[DataField.WEEK_NUMBER] + SEPARATOR_WIDTH)
         
         current_output_row += PADDING
 
-        current_output_row += f"{row[CSVFields.AUXC_CALLSIGN.value]}{SEPARATOR}" \
-            .ljust(field_lengths_max[CSVFields.AUXC_CALLSIGN.value] + SEPARATOR_WIDTH)
+        current_output_row += f"{row[DataField.AUXC_CALLSIGN]}{SEPARATOR}" \
+            .ljust(field_lengths_max[DataField.AUXC_CALLSIGN] + SEPARATOR_WIDTH)
 
         current_output_row += PADDING
 
-        current_output_row += f"{row[CSVFields.TRANSPORT_MODE.value]}{SEPARATOR}" \
-            .ljust(field_lengths_max[CSVFields.TRANSPORT_MODE.value] + SEPARATOR_WIDTH)
+        current_output_row += f"{row[DataField.TRANSPORT_MODE]}{SEPARATOR}" \
+            .ljust(field_lengths_max[DataField.TRANSPORT_MODE] + SEPARATOR_WIDTH)
 
         current_output_row += PADDING
 
-        current_output_row += f"{row[CSVFields.RMS_CALLSIGN.value]}{SEPARATOR}" \
-            .ljust(field_lengths_max[CSVFields.RMS_CALLSIGN.value] + SEPARATOR_WIDTH)
+        current_output_row += f"{row[DataField.RMS_CALLSIGN]}{SEPARATOR}" \
+            .ljust(field_lengths_max[DataField.RMS_CALLSIGN] + SEPARATOR_WIDTH)
 
         current_output_row += PADDING
 
@@ -190,8 +206,8 @@ def pprint_rows(auxc_rows, field_lengths_max):
         # decimal point. Usually, this will be 3 decimal places if everyone
         # checks in not using HF. If someone uses HF, then it is likely that
         # we'll have to accommodate four dps.
-        freq = float(row[CSVFields.RMS_FREQUENCY.value])
-        max_decimal_places = field_lengths_max[CSVFields.RMS_FREQUENCY.value]
+        freq = float(row[DataField.RMS_FREQUENCY])
+        max_decimal_places = field_lengths_max[DataField.RMS_FREQUENCY]
         if max_decimal_places == 3:
             current_output_row += f"{freq:7.3f}{SEPARATOR}"
         elif max_decimal_places == 4:
@@ -202,11 +218,11 @@ def pprint_rows(auxc_rows, field_lengths_max):
         # No consistency now for City, County, State because some names, like
         # Battle Ground are really long and mess up the formatting by
         # introducing a lot of white space.
-        current_output_row += f"{row[CSVFields.AUXC_CITY.value]}{SEPARATOR}"
+        current_output_row += f"{row[DataField.AUXC_CITY]}{SEPARATOR}"
         current_output_row += PADDING
-        current_output_row += f"{row[CSVFields.AUXC_COUNTY.value]}{SEPARATOR}"
+        current_output_row += f"{row[DataField.AUXC_COUNTY]}{SEPARATOR}"
         current_output_row += PADDING
-        current_output_row += f"{row[CSVFields.AUXC_STATE.value]}"
+        current_output_row += f"{row[DataField.AUXC_STATE]}"
         
         print(current_output_row)
 
@@ -219,4 +235,7 @@ if __name__ == '__main__':
     week_rows = load_csv_file(file_name, NUM_HEADER_LINES, int(week_number))
     clean_week_rows = strip_fields(week_rows)
     field_lengths_max = analyse_rows(clean_week_rows)
+
+    # @TODO SORT ROWS IF USER REQUESTS HERE
+
     pprint_rows(clean_week_rows, field_lengths_max)
