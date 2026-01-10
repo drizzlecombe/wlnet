@@ -23,6 +23,7 @@
 # 
 # -----------------------------------------------------------------------------
 
+import argparse
 import csv
 from enum import IntEnum
 from operator import itemgetter
@@ -51,35 +52,40 @@ class DataField(IntEnum):
     AUXC_STATE = 7
 
 # -----------------------------------------------------------------------------
-def validate_week(week_number: str) -> int | None:
-    value = 0
-    try:
-        value = int(week_number)
-    except:
-        print(f"Error: {sys.argv[0]}: "
-              f"Week number argument is not an integer: {week_number}")
-        sys.exit(1)
-    
-    if value < 1 or value > 1000:
+def validate_week(week_number: int) -> int:
+    if week_number < 1 or week_number > 1000:
         print(f"Error: {sys.argv[0]}: "
               f"Week number is out of range: 1 < {week_number} < 1000")
         sys.exit(2)
+    return week_number
+# -----------------------------------------------------------------------------
+def validate_sort_columns(week_data: list[str]) -> list[tuple[int, bool]]:
+    return [(DataField.TRANSPORT_MODE, False), 
+            (DataField.RMS_CALLSIGN, False),
+            (DataField.AUXC_CALLSIGN, True)]
 # -----------------------------------------------------------------------------
 
-def process_command_line() -> Tuple[str, str]:
-    args_len = len(sys.argv)
-    programme_name = sys.argv[0]
-    week_number = 0
-    file_name = ""
-    if args_len == 3:
-        week_number = validate_week(sys.argv[1])
-        file_name = sys.argv[2]
-    elif args_len < 3:
-        raise ValueError(f"{programme_name}: Too few command line arguments")
-    else:
-        raise ValueError(f"{programme_name}: Too many command line arguments")
+def process_command_line() -> tuple[list[tuple[int, bool]], int, str]:
+    parser = argparse.ArgumentParser()
+    # Positional arguments - these MUST be specified on the command line.
+    parser.add_argument("week_number", help="The week number to list.", type=int)
+    parser.add_argument("file_name", help="The file where the CSV data is stored.")
+    
+    # Optional arguments
+    # -c or --column can be specified multiple times with multiple values.
+    parser.add_argument("-c", "--column", action='append', type=str, 
+                        help="Specifies a column to sort on. Multiple instances"
+                        " are permitted.")
 
-    return (sys.argv[1], file_name)
+    args = parser.parse_args()
+    sort_criteria = validate_sort_columns(args.column)
+    week_number = validate_week(args.week_number)
+    file_name = args.file_name
+
+    # This is test code
+    print(args.column)
+
+    return (sort_criteria, week_number, file_name)
 
 # -----------------------------------------------------------------------------
 def load_csv_file(csv_file_name: str, num_header_lines: int, 
@@ -100,20 +106,20 @@ def load_csv_file(csv_file_name: str, num_header_lines: int,
     return raw_checkins
 
 # -----------------------------------------------------------------------------
-def strip_fields(week_rows: list[list[str]]) -> list[list[str]]:
-    stripped_rows = []
+def clean_fields(week_rows: list[list[str]]) -> list[list[str]]:
+    cleansed_rows = []
     for row in week_rows:
         clean_row = []
         clean_row.append(row[DataField.WEEK_NUMBER].strip())
-        clean_row.append(row[DataField.AUXC_CALLSIGN].strip())
-        clean_row.append(row[DataField.TRANSPORT_MODE].strip())
-        clean_row.append(row[DataField.RMS_CALLSIGN].strip())
+        clean_row.append(row[DataField.AUXC_CALLSIGN].strip().upper())
+        clean_row.append(row[DataField.TRANSPORT_MODE].strip().upper())
+        clean_row.append(row[DataField.RMS_CALLSIGN].strip().upper())
         clean_row.append(row[DataField.RMS_FREQUENCY].strip())
         clean_row.append(row[DataField.AUXC_CITY].strip())
         clean_row.append(row[DataField.AUXC_COUNTY].strip())
         clean_row.append(row[DataField.AUXC_STATE].strip())
-        stripped_rows.append(clean_row)
-    return stripped_rows
+        cleansed_rows.append(clean_row)
+    return cleansed_rows
 
 # -----------------------------------------------------------------------------
 def count_decimal_places(frequency: str) -> int:
@@ -167,15 +173,38 @@ def analyse_rows(week_rows: list[list[str]]) -> list[int]:
         most_rms_frequency_dps]
 
 # -----------------------------------------------------------------------------
-def sort_multiple_cols(xs, specs):
+def freq_str_to_float(week_rows: list[list[str]]) -> list[list[str | float]]:
+    converted_rows = [[
+        row[DataField.WEEK_NUMBER],   \
+        row[DataField.AUXC_CALLSIGN], \
+        row[DataField.TRANSPORT_MODE],\
+        row[DataField.RMS_CALLSIGN],  \
+        float(row[DataField.RMS_FREQUENCY]), \
+        row[DataField.AUXC_CITY],     \
+        row[DataField.AUXC_COUNTY],   \
+        row[DataField.AUXC_STATE]] for row in week_rows]
+    return converted_rows
 
-    for key, reverse in reversed(specs):
 
-        xs.sort(key=itemgetter(key), reverse=reverse)
-
-    return xs
 # -----------------------------------------------------------------------------
-def pprint_rows(auxc_rows: list[list[str]], field_lengths_max: list[int]) -> None:
+def sort_on_multiple_cols(week_rows: list[list[str | float]], 
+                          sort_criteria: list[tuple[int, bool]]) \
+                                        -> list[list [str | float]]:
+
+    # Make a shallow copy so that we are not causing side effects (i.e. not
+    # modifying the list that the reference passed in is pointing to)
+    sort_data = week_rows.copy()
+
+    # The columns are sorted in the reverse order that was specified by the
+    # user. I do this because Python sorted() is stable - multiple records with
+    # the same sort criterion are kept in the same order as as they were in the
+    # original list.
+    # S
+    for column, reverse in reversed(sort_criteria):
+        sort_data = sorted(sort_data, key=itemgetter(column), reverse=reverse)
+    return sort_data
+# -----------------------------------------------------------------------------
+def pprint_rows(auxc_rows: list[list[str | float]], field_lengths_max: list[int]) -> None:
     for row in auxc_rows:
         # This is a little awkward because we do not use fixed widths for each
         # column in a row. A given column's width is set by the longest value
@@ -202,11 +231,14 @@ def pprint_rows(auxc_rows: list[list[str]], field_lengths_max: list[int]) -> Non
 
         current_output_row += PADDING
 
-        # Need to align the frequency - which is a floating point value - on the
-        # decimal point. Usually, this will be 3 decimal places if everyone
-        # checks in not using HF. If someone uses HF, then it is likely that
-        # we'll have to accommodate four dps.
-        freq = float(row[DataField.RMS_FREQUENCY])
+        # Need to align the frequency column - which contains floating point
+        # values - on the decimal point. Usually, this will be 3 decimal places
+        # if everyone checks in not using HF. If someone uses HF, then it is
+        # likely that we'll have to accommodate four dps.
+
+        # Make sure this column really is a float (it should be, but just in
+        # case)
+        freq = float(row[DataField.RMS_FREQUENCY]) 
         max_decimal_places = field_lengths_max[DataField.RMS_FREQUENCY]
         if max_decimal_places == 3:
             current_output_row += f"{freq:7.3f}{SEPARATOR}"
@@ -231,11 +263,17 @@ def pprint_rows(auxc_rows: list[list[str]], field_lengths_max: list[int]) -> Non
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    week_number, file_name = process_command_line()
-    week_rows = load_csv_file(file_name, NUM_HEADER_LINES, int(week_number))
-    clean_week_rows = strip_fields(week_rows)
+    sort_criteria, week_number, file_name = process_command_line()
+    week_rows = load_csv_file(file_name, NUM_HEADER_LINES, week_number)
+    clean_week_rows = clean_fields(week_rows)
     field_lengths_max = analyse_rows(clean_week_rows)
 
     # @TODO SORT ROWS IF USER REQUESTS HERE
+    #
+    # If a sort is requested, then need to convert the frequency column from
+    # string to float. This will ensure that the correct ordering when a sort
+    # includes a frequency component.
+    fstf = freq_str_to_float(clean_week_rows)
 
-    pprint_rows(clean_week_rows, field_lengths_max)
+    sorted_week_rows = sort_on_multiple_cols(fstf, sort_criteria)
+    pprint_rows(sorted_week_rows, field_lengths_max)
