@@ -28,7 +28,6 @@ import csv
 from enum import IntEnum
 from operator import itemgetter
 import sys
-from typing import Tuple
 
 # Number of lines in the CSV that are assumed to be headers. This could be an
 # optional parameter on the command line.
@@ -58,11 +57,13 @@ def validate_week(week_number: int) -> int:
               f"Week number is out of range: 1 < {week_number} < 1000")
         sys.exit(2)
     return week_number
+
 # -----------------------------------------------------------------------------
 def validate_sort_columns(week_data: list[str]) -> list[tuple[int, bool]]:
     return [(DataField.TRANSPORT_MODE, True), # True means to reverse sort. 
             (DataField.RMS_CALLSIGN, True),
             (DataField.AUXC_CALLSIGN, False)]
+
 # -----------------------------------------------------------------------------
 
 def process_command_line() -> tuple[list[tuple[int, bool]], int, str]:
@@ -196,10 +197,10 @@ def sort_on_multiple_cols(week_rows: list[list[str | float]],
     # user. I do this because Python sorted() is stable - multiple records with
     # the same sort criterion are kept in the same order as as they were in the
     # original list.
-    # S
     for column, reverse in reversed(sort_criteria):
         sort_data = sorted(sort_data, key=itemgetter(column), reverse=reverse)
     return sort_data
+
 # -----------------------------------------------------------------------------
 def pprint_rows(auxc_rows: list[list[str | float]], field_lengths_max: list[int]) -> None:
     for row in auxc_rows:
