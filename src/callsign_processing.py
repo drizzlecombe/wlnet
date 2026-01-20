@@ -4,7 +4,9 @@ class Callsign:
     callsign_split_pattern = re.compile('^(.*)([-/])(.*)$')
 
     def __init__(self, raw_callsign: str):
-
+        # Assume that the callsign is not well-formed or somehow broken. That's
+        # true for a fresh instance of this class.
+        self.is_valid = False
         self.callsign = ""
         self.suffix = ""
         self.separator = ""
@@ -88,24 +90,34 @@ class _CallsignProcessor:
         callsign_matchers.append(re.compile(r'^X[EF][1-4][A-Z]{2,3}$'))
         return callsign_matchers
 # -----------------------------------------------------------------------------
-
+    cache_hits = 0
+    callsign_count = 0
     def validate(self, callsign: str) -> Callsign:
         """Checks to see if a string is a probable amateur radio callsign."""
 
         canonical_callsign = Callsign(callsign)
-
+        _CallsignProcessor.callsign_count += 1
         call_seen_before_num = self.callsign_cache.get(canonical_callsign.callsign)
+
+        # Cache hits
+        # if _CallsignProcessor.callsign_count > 0 and _CallsignProcessor.callsign_count % 50 == 0:
+            # hit_ratio = float(_CallsignProcessor.cache_hits) / _CallsignProcessor.callsign_count 
+            # print(f'cache: counts, hit ratio: {_CallsignProcessor.callsign_count}, {hit_ratio}')
         if call_seen_before_num is not None:
             # Seen the callsign before
             self.callsign_cache[canonical_callsign.callsign] = call_seen_before_num + 1
+            canonical_callsign.is_valid = True
+            _CallsignProcessor.cache_hits += 1
             return canonical_callsign
         
         # Not seen this callsign before. Better validate it.
         for pattern in self.patterns:
             if pattern.match(canonical_callsign.callsign):
                 self.callsign_cache.setdefault(canonical_callsign.callsign, 1)
+                canonical_callsign.is_valid = True
                 return canonical_callsign
-        return None
+        canonical_callsign.is_valid = False
+        return None # Need to return a Callsign instance that is equivalent to Null.
 # -----------------------------------------------------------------------------
     def dump_callsign_cache(self):
         s = sorted(self.callsign_cache.items(), key = lambda x: x[1])

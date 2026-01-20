@@ -60,9 +60,9 @@ def validate_week(week_number: int) -> int:
 
 # -----------------------------------------------------------------------------
 def validate_sort_columns(week_data: list[str]) -> list[tuple[int, bool]]:
-    return [(DataField.TRANSPORT_MODE, True), # True means to reverse sort. 
-            (DataField.RMS_CALLSIGN, True),
-            (DataField.AUXC_CALLSIGN, False)]
+    return [(DataField.TRANSPORT_MODE, False), # True means to reverse sort. 
+            (DataField.RMS_CALLSIGN, False),
+            (DataField.AUXC_CALLSIGN, True)]
 
 # -----------------------------------------------------------------------------
 
