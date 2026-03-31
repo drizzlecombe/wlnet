@@ -40,6 +40,7 @@ SEPARATOR = ","
 SEPARATOR_WIDTH = len(SEPARATOR)
 
 # -----------------------------------------------------------------------------
+# CSV column numbers mapping
 class DataField(IntEnum):
     WEEK_NUMBER = 0
     AUXC_CALLSIGN = 1
@@ -59,11 +60,26 @@ def validate_week(week_number: int) -> int:
     return week_number
 
 # -----------------------------------------------------------------------------
-def validate_sort_columns(week_data: list[str]) -> list[tuple[int, bool]]:
-    return [ # True means to reverse sort. 
-            (DataField.TRANSPORT_MODE, True),
-            (DataField.RMS_CALLSIGN, False),
-            (DataField.AUXC_CALLSIGN, False)]
+def validate_sort_columns(sort_specification: list[str]) -> list[tuple[int, bool]]:
+    sort_order: list[tuple[int, bool]] = []
+    # print(sort_specification)
+    for v in sort_specification:
+        uv = v.upper()
+        if uv == "MODE":
+            sort_order.append((DataField.TRANSPORT_MODE, False))
+        elif uv == "MODE,R":
+            sort_order.append((DataField.TRANSPORT_MODE, True))
+        elif uv == "RMS":
+            sort_order.append((DataField.RMS_CALLSIGN, False))
+        elif uv == "RMS,R":
+            sort_order.append((DataField.RMS_CALLSIGN, True))
+        elif uv == "AUXC":
+            sort_order.append((DataField.AUXC_CALLSIGN, False))
+        elif uv == "AUXC,R":
+            sort_order.append((DataField.AUXC_CALLSIGN, True))
+        else:
+            raise ValueError(f"Invalid sort criterion: {uv}")
+    return sort_order
 
 # -----------------------------------------------------------------------------
 
@@ -74,13 +90,19 @@ def process_command_line() -> tuple[list[tuple[int, bool]], int, str]:
     parser.add_argument("file_name", help="The file where the CSV data is stored.")
     
     # Optional arguments
-    # -c or --column can be specified multiple times with multiple values.
-    parser.add_argument("-c", "--column", action='append', type=str, 
-                        help="Specifies a column to sort on. Multiple instances"
-                        " are permitted.")
+    # Sort criteria - can sort on MODE, RMS and AUXC.
+    parser.add_argument("-s", "--sort", action='append', type=str, 
+                        help="""Specifies a column to sort on. There are three
+                        options: AUXC, RMS or MODE.
+                        You can specify multiple -s options.
+                        Each option can be reverse sorted by appending ,R.
+                        The default sort order is: -s MODE,R -s AUXC -s RMS""")
 
     args = parser.parse_args()
-    sort_criteria = validate_sort_columns(args.column)
+    sort_specification = ["MODE,R", "AUXC", "RMS"]
+    if args.sort is not None:
+        sort_specification = args.sort
+    sort_criteria = validate_sort_columns(sort_specification)
     week_number = validate_week(args.week_number)
     file_name = args.file_name
 
