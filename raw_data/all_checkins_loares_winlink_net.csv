@@ -4147,12 +4147,11 @@
 191, KK7MLS, Packet, W7BVT-10, 145.020, Lake Oswego, Clackamas, Oregon
 191, W7CRI, PACKET, KD7ZDO-10, 145.570, WILSONVILLE, CLACKAMAS, OREGON
 191, N1ACW/M, Packet, K7HDA-10, 145.030, Deschutes National Forest, Deschutes, Oregon
-191, N1ACW/M, TELNET, STARLINK,0.000, Sisters, Deschutes, Oregon
-191, W7TEE/M, TELNET, STARLINK,0.000, SANTIAM SF, LANE, OREGON
-191, KC7TAK/M, TELNET, STARLINK,0.000, Santiam State Forest, Lane, OR
-191, KG7WKK, Telnet, N/A,0.000, Lake Oswego, Clackamas, Oregon
-191, KN6QT, TELNET, N/A,0.000, WILSONVILLE, CLACKAMAS, OR
-191, KD7PFH, VARA FM, KD7ZDO, 145.770, Lake Oswego, Clackamas, OR
+191, N1ACW/M, TELNET, STARLINK, 0.000, Sisters, Deschutes, Oregon
+191, W7TEE/M, TELNET, STARLINK, 0.000, SANTIAM SF, LANE, OREGON
+191, KC7TAK/M, TELNET, STARLINK, 0.000, Santiam State Forest, Lane, OR
+191, KG7WKK, Telnet, N/A, 0.000, Lake Oswego, Clackamas, Oregon
+191, KN6QT, TELNET, N/A, 0.000, WILSONVILLE, CLACKAMAS, OR
 191, KI7DGC, VARA FM, W7YAM-12, 145.090, Lake Oswego, Clackamas, Oregon
 191, KI7QIB, VARA FM, K7MCE-10, 145.070, Portland, Multnomah, Oregon
 191, KK6OTP, VARA FM, K7MCE-10, 145.070, Beavercreek, Clackamas, OR
