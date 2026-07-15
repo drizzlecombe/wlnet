@@ -52,43 +52,43 @@ class _CallsignProcessor:
         # first pattern met. This allows us to keeping the patterns simple and
         # allows for added functionality like counting of the various classes
         # of callsign, for example.
-        callsign_matchers = []
+        return [
 
         # Most common call is the 2x3 or group D. First character is either K,
         # W. This is the pattern that will be tried first with the match.
-        callsign_matchers.append(re.compile(r"^[KW][A-Z][0-9][A-Z]{3}$"))
+        re.compile(r"^[KW][A-Z][0-9][A-Z]{3}$"),
 
         # 1x3 pattern - group C. K, N, W as the prefix. Three letter suffix.
-        callsign_matchers.append(re.compile(r"^[KNW][0-9][A-Z]{3}$"))
+        re.compile(r"^[KNW][0-9][A-Z]{3}$"),
 
         # 2x2 pattern - group B. K, N, W plus a letter as the prefix. Two
         # letter suffix.
-        callsign_matchers.append(re.compile(r"^[KNW][A-Z][0-9][A-Z]{2}$"))
+        re.compile(r"^[KNW][A-Z][0-9][A-Z]{2}$"),
 
         # 2x2 pattern - group A. AA - AL. Two letter suffix.
-        callsign_matchers.append(re.compile(r"^A[A-L][0-9][A-Z]{2}$"))
+        re.compile(r"^A[A-L][0-9][A-Z]{2}$"),
 
         # 1x2 pattern - group A. Prefix: one of K, N, W. Two letter suffix.
-        callsign_matchers.append(re.compile(r"^[KNW][0-9][A-Z]{2}$"))
+        re.compile(r"^[KNW][0-9][A-Z]{2}$"),
 
         # 2x1 pattern - group A. Prefix - two letters: K, N, W followed by a
         # letter. Single letter suffix.
-        callsign_matchers.append(re.compile(r"^[KNW][A-Z][0-9][A-Z]$"))
+        re.compile(r"^[KNW][A-Z][0-9][A-Z]$"),
 
         # 2x1 pattern - group A. Prefix - two letters: AA-AL followed by a
         # letter. Single letter suffix.
-        callsign_matchers.append(re.compile(r"^A[A-L][0-9][A-Z]$"))
+        re.compile(r"^A[A-L][0-9][A-Z]$"),
 
         # Lastly, for the US at least - special event stations. 1x1. Prefix K,
         # N, W. Suffix: A-W or Y-Z. X is not permitted.
-        callsign_matchers.append(re.compile(r"^[KNW][0-9][A-WYZ]$"))
+        re.compile(r"^[KNW][0-9][A-WYZ]$"),
 
         # Canadian catchall
-        callsign_matchers.append(re.compile(r'^V[AEOY][0-9][A-Z]{2,3}$'))
+        re.compile(r'^V[AEOY][0-9][A-Z]{2,3}$'),
 
         # Mexican catchall
-        callsign_matchers.append(re.compile(r'^X[EF][1-4][A-Z]{2,3}$'))
-        return callsign_matchers
+        re.compile(r'^X[EF][1-4][A-Z]{2,3}$')
+        ]
 # -----------------------------------------------------------------------------
     cache_hits = 0
     callsign_count = 0
