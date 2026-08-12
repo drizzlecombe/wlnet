@@ -1,9 +1,10 @@
 from checkin import Checkin
 import sqlite3 as sql
 
-_db_filename = None
-_db_connection = None
-_db_started = False
+_db_filename:str|None = None
+_db_connection:sql.Connection|None = None
+_db_started:bool = False
+
 #------------------------------------------------------------------------------
 class StorageException(Exception):
     def __init__(self, msg):

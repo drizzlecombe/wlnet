@@ -18,6 +18,7 @@ import csv
 import config
 
 from checkin import validate_checkins, Checkin
+from gateway import Gateway
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -133,7 +134,7 @@ class Auxc:
                 # check that the AUXC used the /M modifier
                 # (even though lack of this forces an exception in the Checkin class)
                 if checkin.transport_mode == 'TELNET' and \
-                    checkin.gateway == 'STARLINK' and \
+                    checkin.gateway.is_satellite() and \
                     checkin.is_mobile:
                     self.distinct_checkin_type[checkin.week_number] = RF_CHECKIN
                 else:
@@ -147,12 +148,12 @@ class Auxc:
         # an AUXC's STARLINK mobile (/M) check-ins regardless if they were
         # distinct or not.
         if checkin.transport_mode == 'TELNET' and \
-            checkin.gateway == 'STARLINK' and \
+            checkin.gateway.is_satellite() and \
                 checkin.is_mobile:
             self.used_starlink += 1
 
         # Record the RF Gateway used for the check-in.
-        if checkin.gateway not in ['N/A', 'STARLINK']:
+        if checkin.gateway.identifier not in ['N/A', 'STARLINK']:
             self.distinct_gateways.add(checkin.gateway)
 
         # Participation is monitored from the first week that the AUXC checked

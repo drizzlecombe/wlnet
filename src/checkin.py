@@ -2,7 +2,7 @@ from string import capwords
 
 from callsign_processing import Callsign, validate_callsign
 from transport_modes import mode_validator, is_mode_hf
-from gateway import gateway_validator
+from gateway import Gateway, register_gateway
 from location import location_check
 
 MAX_WEEK_NUMBER = 200 # TODO - load this from a config file
@@ -40,8 +40,8 @@ class Checkin:
         # Check frequency first because this is the only value that is
         # not a string. If input values are in the wrong category, this
         # will most likely detect the issue.
-        self.frequency = self.check_frequency(frequency)
-        self.week_number = self.check_week_number(week_number)
+        self.frequency:float = self.check_frequency(frequency.strip())
+        self.week_number:int = self.check_week_number(week_number.strip())
 
         if self.week_number > Checkin.max_week_number:
             Checkin.max_week_number = self.week_number
@@ -50,7 +50,10 @@ class Checkin:
         self.is_mobile = self.callsign.suffix == 'M'
         self.transport_mode = self.check_mode(transport_mode, self.frequency)
         self.is_mode_HF = is_mode_hf(self.transport_mode, self.frequency)
-        self.gateway = gateway_validator(gateway)
+        self.gateway:Gateway = register_gateway(gateway, self.frequency)
+        if self.gateway is None:
+            raise ValueError('The gateway identifier or frequency is '
+                             'invalid: {gateway}, {self.frequency}')
         self.location = self.check_location(location)
         self.county = county
         if not isinstance(state, str):
@@ -64,9 +67,9 @@ class Checkin:
         # based on RF or Internet use.
         if self.transport_mode == 'TELNET':
             #  - N/A and STARLINK are the only valid RMS values for TELNET
-            if self.gateway == 'N/A':
+            if self.gateway.identifier == 'N/A':
                 self.type = Checkin.CHECKIN_INET
-            elif self.gateway == 'STARLINK':
+            elif self.gateway.identifier == 'STARLINK':
                 # Only mobile operations are considered STARLINK check-ins
                 if self.is_mobile:
                     self.type = Checkin.CHECKIN_RF
@@ -168,7 +171,7 @@ class Checkin:
         return {'week_number' : self.week_number,
                    'callsign' : self.callsign.callsign,
                    'transport_mode' : self.transport_mode,
-                   'gateway' : self.gateway,
+                   'gateway' : self.gateway.identifier,
                    'frequency' : self.frequency,
                    'location' : self.location,
                    'county' : self.county,
