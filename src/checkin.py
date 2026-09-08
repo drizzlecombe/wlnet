@@ -5,7 +5,7 @@ from transport_modes import mode_validator, is_mode_hf
 from gateway import Gateway, register_gateway
 from location import location_check
 
-MAX_WEEK_NUMBER = 200 # TODO - load this from a config file
+MAX_WEEK_NUMBER = 300 # TODO - load this from a config file
 MAX_FREQUENCY = 5800.0 # TODO - load this from a config file
 
 # -----------------------------------------------------------------------------
