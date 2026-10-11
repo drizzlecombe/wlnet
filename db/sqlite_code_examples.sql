@@ -95,6 +95,14 @@ select cs, mode, count(*)
  group by cs, mode
  order by cs, mode;
 
+-- Get the ten busiest RMSs for a given period. This gets used to see if RMSs
+-- are being evenly used or not.
+select gateway, count(*)
+  from checkins 
+ where week_number >= 201 
+ group by gateway
+ order by count(*) desc
+ limit 10;
 -----------------------------------------------------------------------
 -- Dashboard queries
 -----------------------------------------------------------------------
@@ -121,4 +129,3 @@ select week_number, count(*)
   where week_number >= 105
   group by transport_mode
   order by count(*) desc;
-
