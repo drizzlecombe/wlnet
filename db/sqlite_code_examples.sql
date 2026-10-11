@@ -99,7 +99,7 @@ select cs, mode, count(*)
 -- are being evenly used or not.
 select gateway, count(*)
   from checkins 
- where week_number >= 201 
+ where week_number between 201 and 206 -- inclusive. 
  group by gateway
  order by count(*) desc
  limit 10;
