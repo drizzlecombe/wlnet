@@ -97,11 +97,16 @@ select cs, mode, count(*)
 
 -- Get the ten busiest RMSs for a given period. This gets used to see if RMSs
 -- are being evenly used or if AUXCs are glomming to certain RMSs.
-select gateway, count(*)
-  from checkins 
- where week_number between 201 and 206 -- inclusive. 
- group by gateway
- order by count(*) desc
+-- Use .mode column --limits on --sw auto --textjsonb on --widths 10,-3,-10
+--     .mode markdown --limits on --sw auto --textjsonb on --widths 10,-3,-10 is 
+--     a good choice for output too.
+
+select rms, cnt, format('%.1f', (cnt *100.0) / sum(cnt) over()) as percentage
+  from (select gateway as rms, count(*) as cnt
+          from checkins 
+         where week_number between 201 and 206 -- inclusive. 
+         group by rms)
+ order by cnt desc
  limit 10;
 -----------------------------------------------------------------------
 -- Dashboard queries
