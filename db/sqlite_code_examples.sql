@@ -96,7 +96,7 @@ select cs, mode, count(*)
  order by cs, mode;
 
 -- Get the ten busiest RMSs for a given period. This gets used to see if RMSs
--- are being evenly used or not.
+-- are being evenly used or if AUXCs are glomming to certain RMSs.
 select gateway, count(*)
   from checkins 
  where week_number between 201 and 206 -- inclusive. 
