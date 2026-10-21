@@ -104,7 +104,7 @@ select cs, mode, count(*)
 select rms, cnt, format('%.1f', (cnt *100.0) / sum(cnt) over()) as percentage
   from (select gateway as rms, count(*) as cnt
           from checkins 
-         where week_number between 201 and 206 -- inclusive. 
+         where week_number between 207 and 212 -- inclusive. 
          group by rms)
  order by cnt desc
  limit 10;
