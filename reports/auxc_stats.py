@@ -23,9 +23,15 @@ from gateway import Gateway
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
+
+# Check-in type. These can be no check-in, RF or non-RF.
 NO_CHECKIN = 0
 RF_CHECKIN = 1
 NON_RF_CHECKIN = 2
+
+# An AUXC is considered active if he or she has checked into the net in the last
+# ACTIVE_THRESHOLD weeks.
+ACTIVE_THRESHOLD = 26
 
 # ------------------------------------------------------------------------------
 def process_command_line():
@@ -188,6 +194,12 @@ class Auxc:
     def weeks_since_last_checkin(self) -> int:
         return Auxc.current_week_number - max(self.distinct_checkin_type.keys())
 
+   # -------------------------------------------------------------------------
+    def is_active(self) -> bool:
+        """ This function only returns a valid result once ALL the AUXC's
+        check-ins have been scanned."""
+        return self.weeks_since_last_checkin() <= ACTIVE_THRESHOLD
+    
     # -------------------------------------------------------------------------
     def checked_in_specified_week(self, week_number) -> bool:
         return week_number in self.distinct_checkin_type.keys()
@@ -374,11 +386,25 @@ def main():
     # List out the AUXCs' checkin information
     total_distinct_checkins = 0
     auxcs = checkins_by_callsign(valid_checkins)
-    for auxc in sorted(auxcs.values(), reverse=True):
+
+    # Trial: scan all auxcs to find the active ones. List them first.
+    active_auxcs = []
+    inactive_auxcs = []
+    for auxc in auxcs.values():
+        if auxc.is_active():
+            active_auxcs.append(auxc)
+        else:
+            inactive_auxcs.append(auxc)
+
+    for auxc in sorted(active_auxcs, reverse=True):
         total_distinct_checkins += auxc.num_distinct_checkins()
         print(auxc)
     print()
-
+    # Trial: print all the inactive auxcs at the bottom of the list.
+    for auxc in sorted(inactive_auxcs, reverse=True):
+        total_distinct_checkins += auxc.num_distinct_checkins()
+        print(auxc)
+    print()
     #
     # Print out the summary information
     #
