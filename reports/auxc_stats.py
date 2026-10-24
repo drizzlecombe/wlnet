@@ -206,24 +206,46 @@ class Auxc:
     
     # -------------------------------------------------------------------------
     def __lt__(self, other):
-        """AUXCs are sortable. They are ranked by the number of distinct
-        checkins, then participation. More distinct checkins means an earlier
-        position in the overall list of AUXCs. If two or more AUXCs have the
-        same number of distinct checkins and same level of participation, then
-        they are sorted by callsign lexicographically."""
+        """AUXCs are sortable. """
 
         if not isinstance(other, Auxc):
             raise TypeError(f'{self.callsign}: '\
                             'The other value is not an instance of Auxc')
-        
-        if self.num_distinct_checkins() == other.num_distinct_checkins():
-            # Same number of distinct checkins, so check participation.
-            if self.net_participation() == other.net_participation():
-                # Same participation as well, order by callsign
-                return self.callsign > other.callsign
+
+        # Original sort order. AUXCs are ranked by the number of distinct
+        # checkins, then participation. More distinct checkins means an earlier
+        # position in the overall list of AUXCs. If two or more AUXCs have the
+        # same number of distinct checkins and same level of participation, then
+        # they are sorted by callsign lexicographically.
+
+        # if self.num_distinct_checkins() == other.num_distinct_checkins():
+        #     # Same number of distinct checkins, so check participation.
+        #     if self.net_participation() == other.net_participation():
+        #         # Same participation as well, order by callsign
+        #         return self.callsign > other.callsign
+        #     return self.net_participation() < other.net_participation()
+        # return self.num_distinct_checkins() < other.num_distinct_checkins()
+
+        # Current sort order for AUXCs. AUXCs who most recently checked in are
+        # shown first. These are organised, next, by level of participation. 
+        # If equal on recent check-in and participation, then distinct number of
+        # checkin weeks are used. Finally, callsigns are used to break ties.
+        if self.weeks_since_last_checkin() != other.weeks_since_last_checkin():
+            # A lower number of weeks since last participation ranks higher in
+            # the sort order - hence the > sign (e.g. if current AUXC checked in
+            # last two weeks ago, but the other AUXC checked in this week, then
+            # current AUXC is ranked lower - thus True for __lt__).
+            return self.weeks_since_last_checkin() > other.weeks_since_last_checkin()
+        # Same number of weeks since last checkin, so check participation.
+        elif self.net_participation() != other.net_participation():
             return self.net_participation() < other.net_participation()
-        return self.num_distinct_checkins() < other.num_distinct_checkins()
-     
+        # Same participation as well, check number of weeks checked in.
+        elif self.num_distinct_checkins() != other.num_distinct_checkins():
+            return self.num_distinct_checkins() < other.num_distinct_checkins()
+        # Still the same, so compare callsigns. These are ordered
+        # lexicographically hence the > comparison.
+        return self.callsign > other.callsign
+
     # -------------------------------------------------------------------------
     def __repr__(self):
         """This is the report. """
